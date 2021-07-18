@@ -1,7 +1,6 @@
 /*
 todo:
 
-- faire que quand je fais entrée, en fait ca crée une ligne en dessous de la ligne courante
 - faire une autocompletion avec un dico latex pour faciliter le typing
 - rajouter le fait de pouvoir mettre des barres au dessus de chiffres / caracteres quand un pattern se reproduit, genre 10/3 = 3.33 barres
 - 
@@ -52,6 +51,8 @@ function MathLineInput() {
 
     this.undoRedoManager = new UndoRedoManager(this.mathField, this.jQEl);
     this.getLatexValue = () => this.mathField.latex();
+    this.setLatexValue = (pValue) => this.mathField.latex(pValue);
+    this.addValueAtCursorPosition = (pValue) => this.mathField.typedText(pValue);
     this.isEmpty = () => (this.getLatexValue() === '');
     
     this.appendTo = function (pElement) {
@@ -62,6 +63,19 @@ function MathLineInput() {
     this.hasNextMathLineInput = () => (this.nextMathLineInput !== null);
     this.insertAfter = (pElement) => {this.jQEl.insertAfter(pElement)};
     this.focus = () => (this.mathField.focus());
+
+
+    this.getCursorOffset = () => {
+        this.mathField.focus();
+
+        let retOffset = this.mathField.__controller.cursor.offset();
+        if (!(retOffset)) {
+            retOffset = { 'top': 0, 'left': 0 }
+        }
+
+        return retOffset
+    };
+
     this.erase = () => {
         if (this.hasPreviousMathLineInput()) {
             this.previousMathLineInput.nextMathLineInput = this.nextMathLineInput;
@@ -73,6 +87,9 @@ function MathLineInput() {
 
         this.jQEl.remove();
     };
+
+    this.keyDown = (pFunction) => this.jQEl.on('keydown', (e) => pFunction(e));
+    this.keyUp = (pFunction) => this.jQEl.on('keyup', (e) => pFunction(e));
 
     this.setDeleteIfBackSpaceInEmptyFieldIsTypedEvent = () => {
         this.jQEl.on('keydown', (e) => {
@@ -107,6 +124,7 @@ function MathLineInput() {
         this.setDeleteIfBackSpaceInEmptyFieldIsTypedEvent();
     };
 
+    this.autocompleter = new AutoCompleter(this, g_keywordsList);
     this.init();
 }
 
