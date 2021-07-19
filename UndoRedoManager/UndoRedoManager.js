@@ -36,15 +36,19 @@ const unaffectingKeys = [TAB_KEYCODE,
                         DOWNARROW_KEYCODE,
                         ALTGR_KEYCODE];
 
-function UndoRedoManager(pMathField, pElement) {
-    this.mathField = pMathField;
-    this.contentEl = pElement;
-    this.typedHistory = [this.mathField.latex()];
+function UndoRedoManager(pMathLineInput) {
+    this.mathLineInput = pMathLineInput;
+    this.typedHistory = [this.mathLineInput.mathField.latex()];
     this.ctrlIsDown = false;
+    this.altIsDown = false;
     this.YIsDown = false;
     this.ZIsDown = false;
     this.currentState = 0;
     this.buffSize = 50;
+
+    this.insertStr = (pStr) => {
+        this.mathLineInput.mathField.typedText(pStr);
+    };
 
     this.rearrangeTypedArray = () => {
         if (this.typedHistory.length > this.buffSize) {
@@ -64,6 +68,10 @@ function UndoRedoManager(pMathField, pElement) {
                 this.ctrlIsDown = false;
                 break;
 
+            case ALT_KEYCODE:
+                this.altIsDown = true;
+                break;
+
             case Y_KEYCODE:
                 this.YIsDown = false;
                 break;
@@ -78,6 +86,10 @@ function UndoRedoManager(pMathField, pElement) {
         switch (pDownedKey) {
             case CTRL_KEYCODE:
                 this.ctrlIsDown = true;
+                break;
+
+            case ALT_KEYCODE:
+                this.altIsDown = true;
                 break;
 
             case Y_KEYCODE:
@@ -95,7 +107,7 @@ function UndoRedoManager(pMathField, pElement) {
             this.typedHistory = this.typedHistory.slice(0, (this.currentState + 1));
         }   
         
-        this.typedHistory.push(this.mathField.latex());
+        this.typedHistory.push(this.mathLineInput.mathField.latex());
         this.rearrangeTypedArray();
         this.currentState++;
     };
@@ -103,44 +115,133 @@ function UndoRedoManager(pMathField, pElement) {
     this.undo = () => {
         if (this.currentState !== 0) {
             this.currentState--;
-            this.mathField.latex(this.typedHistory[this.currentState]);
+            this.mathLineInput.mathField.latex(this.typedHistory[this.currentState]);
         }  else {
             //console.log('do nothing');
         }
     };
 
+    this.simulateKeyPress = (pCode) => {
+        jQuery.event.trigger({ type : 'keypress', which : pCode });
+      }
+
     this.redo = () => {
         if (this.currentState < (this.typedHistory.length - 1)) {
             this.currentState++;
-            this.mathField.latex(this.typedHistory[this.currentState]);
+            this.mathLineInput.mathField.latex(this.typedHistory[this.currentState]);
         } else {
             //console.log('do nothing');
         }
     };
 
-    this.contentEl.on('keyup', (e) => {
-        this.checkIfSpecialKeysAreUpAndSetStates(e.which);
+    this.setEvents = () => {
+        this.mathLineInput.jQEl.on('keyup', (e) => {
+            this.checkIfSpecialKeysAreUpAndSetStates(e.which);
+            
+            //log in typedHistory
+            if ((this.isKeyIsUnaffecting(e.which) === false)
+                && (this.ctrlIsDown === false || (this.ctrlIsDown && e.which === V_KEYCODE))) {
+                this.saveState();
+            }
+        });
+    
+        this.mathLineInput.jQEl.on('keydown', (e) => {
+            //console.log(e.which)
+            console.log(this.mathLineInput.mathField.latex());
+            this.checkIfSpecialKeysAreDownAndSetStates(e.which);
+
+            if (e.which === ESCAPE_KEYCODE) {
+                if (!(this.mathLineInput.autocompleter.AutoCompleterManager.autoCompletionWidget.isVisible)) {
+                    this.mathLineInput.mathField.blur();
+                }
+            }
+
+            //set shortcuts
+            if (this.ctrlIsDown) {
+                e.preventDefault();
+
+                switch (e.which) {
+                    //ctrl + D
+                    case 68:
+                        this.mathLineInput.mathField.write('\\partial ');
+                        break;
+
+                    //ctrl + F
+                    case 70:
+                        this.mathLineInput.mathField.write('\\forall');
+                        break;
+
+                    //ctrl + right
+                    case 39:
+                        this.mathLineInput.mathField.write('\\rightarrow');
+                        break;
         
-        //log in typedHistory
-        if ((this.isKeyIsUnaffecting(e.which) === false)
-            && (this.ctrlIsDown === false || (this.ctrlIsDown && e.which === V_KEYCODE))) {
-            this.saveState();
-        }
-    });
+                    //ctrl + left
+                    case 37:
+                        this.mathLineInput.mathField.write('\\leftarrow');
+                        break;
+        
+                    //ctrl + B
+                    case 66:
+                        this.mathLineInput.mathField.typedText('\\vec ');
+                        break;
 
-    this.contentEl.on('keydown', (e) => {
-        this.checkIfSpecialKeysAreDownAndSetStates(e.which);
+                    //ctrl + S
+                    case 83:
+                        this.mathLineInput.mathField.write('\\sum');
+                        break;
 
-        //ctrl+z
-        if (this.ctrlIsDown && this.ZIsDown) {
-            this.undo();
-        }
+                    //ctrl + P
+                    case 80:
+                        this.mathLineInput.mathField.write('\\prod');
+                        break;
+        
+                    //ctrl + I
+                    case 73:
+                        this.mathLineInput.mathField.write('\\in');
+                        break;
 
-        //ctrl + y
-        if (this.ctrlIsDown && this.YIsDown) {
-            this.redo();
-        }
-    });
+                    //ctrl + R
+                    case 82:
+                        this.mathLineInput.mathField.write('\\R');
+                        break;
+
+                    //ctrl + Q
+                    case 81:
+                        this.mathLineInput.mathField.write('\\Q');
+                        break;
+
+                    //ctrl + Z
+                    case 90:
+                        this.mathLineInput.mathField.write('\\Z');
+                        break;
+
+                    //ctrl + N
+                    case 78:
+                        this.mathLineInput.mathField.write('\\N');
+                        break;
+                }
+            }
+                
+            //ctrl+z
+            if (this.ctrlIsDown && this.ZIsDown) {
+                e.preventDefault();
+                this.undo();
+            }
+    
+            //ctrl + y
+            if (this.ctrlIsDown && this.YIsDown) {
+                e.preventDefault();
+                this.redo();
+            }
+        });
+    };
+
+    this.init = () => {
+        this.setEvents();
+    }
+
+    this.init();
 }
 
 (function getCursorPosition() {

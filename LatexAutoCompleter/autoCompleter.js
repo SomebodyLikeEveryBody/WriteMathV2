@@ -54,7 +54,19 @@ function AutoCompleterManager(pInputTextElement) {
     * display the suggested keywords according to what the user is currently typing.
     * */
     this.getCurrentlyTypingWord = () => {
-        // let inputTextFromStartToCursorPosition = this.getInputStr().substring(0, this.getSelectionStart());
+        //pistes
+        // on aura forcement besoin d'avoir la position du curseur
+        //si on n'arrive pas a avoir la position du curseur, on sera obligé de pas utiliser le parsing du latex et de stoquer les input lorsqu'on les tape ==> un peu relou
+        // prendre le latex de start à la position du curseur et le split('\\ ') et ne garder que la derniere chaine
+        // prendre cette chaine et 
+        // le split
+
+        //en vrai je pense qu'on va faire comme ca
+        //quand on keyup ca push le caractere qui a ete tapé dans un array
+        //au fur et a mesure que je tape, ca stocke les caractere pour obtenir le mot qu'on est en train de taper et voila
+        //si on a aucune ctrlkeydown (genre ctrl, shift, alt) et qu'on tape espace ou _ ou ^ ou ( ou ) ou . ou d'autres a rajouter, ca reset l'array et voila
+        //==> implementation ce soir
+         //let inputTextFromStartToCursorPosition = this.getInputStr().substring(0, this.getSelectionStart());
         // let lastWordOfcursorLine = inputTextFromStartToCursorPosition.split('\n').pop().split(' ').pop();
 
         // return lastWordOfcursorLine;
@@ -74,7 +86,7 @@ function AutoCompleterManager(pInputTextElement) {
      * Erase all the content of the AutoCompleterManager and set its content to pValue
      * */
     this.setContent = (pValue) => this.inputTextElement.setLatexValue(pValue);
-    this.addContent = (pValue) => this.inputTextElement.typedText(pValue);
+    this.addContent = (pValue) => this.inputTextElement.mathField.typedText(pValue);
 }
 
 /******************************************************************************************
@@ -280,7 +292,7 @@ function ClickAndKeyListener(pAutoCompleterManager) {
     *  .  UP / DOWN / ENTER / BACKSPACE ==> navigation into the auto-completer widget
     *  .  ESCAPE ==> hide auto-completer widget
     * */
-    this.setKeyDownEventsToAutoCompleterManager = function (pController) {
+    this.setKeyDownEventsToAutoCompleterManager = (pController) => {
         this.AutoCompleterManager.keyDown((e) => {
             if (e.which === this.CTRL_KEY) {
                 this.IsCtrlKeyIsDown = true;
@@ -315,18 +327,18 @@ function ClickAndKeyListener(pAutoCompleterManager) {
                     let selectedKeyword = this.AutoCompleterManager.autoCompletionWidget.getSelectedKeyword();
                     let currentlyTypingWord = this.AutoCompleterManager.getCurrentlyTypingWord();
                     let inputStr = this.AutoCompleterManager.getInputStr();
-                    let startText = inputStr.substring(0, this.AutoCompleterManager.getSelectionStart() - currentlyTypingWord.length);
-                    let endText = inputStr.substring(this.AutoCompleterManager.getSelectionStart(), inputStr.length);
+                    //let startText = inputStr.substring(0, this.AutoCompleterManager.getSelectionStart() - currentlyTypingWord.length);
+                    //let endText = inputStr.substring(this.AutoCompleterManager.getSelectionStart(), inputStr.length);
                     
                     if (selectedKeyword !== '') {
-                        this.AutoCompleterManager.setContent(startText + selectedKeyword + endText);
+                        this.AutoCompleterManager.addContent(selectedKeyword);
                     
                         //need to explain that
-                        if (selectedKeyword.slice(-1) === ")") {
-                            this.AutoCompleterManager.putCursorAt(startText.length + selectedKeyword.length - 1);
-                        } else {
-                            this.AutoCompleterManager.putCursorAt(startText.length + selectedKeyword.length);
-                        }
+                        // if (selectedKeyword.slice(-1) === ")") {
+                        //     this.AutoCompleterManager.putCursorAt(startText.length + selectedKeyword.length - 1);
+                        // } else {
+                        //     this.AutoCompleterManager.putCursorAt(startText.length + selectedKeyword.length);
+                        // }
                         
                         this.AutoCompleterManager.autoCompletionWidget.hide();
                         e.preventDefault();
@@ -352,6 +364,8 @@ function ClickAndKeyListener(pAutoCompleterManager) {
     this.setKeyUpEventsToAutoCompleterManager = function (pController) {
         this.AutoCompleterManager.keyUp((e) => {
 
+            // console.log(this.AutoCompleterManager.inputTextElement.getLatexValue());
+            //console.log(this.AutoCompleterManager.inputTextElement.getLatexValue());
             if (this.AutoCompleterManager.autoCompletionWidget.isVisible === true && e.which !== this.UP_KEY && e.which !== this.DOWN_KEY) {
                 this.AutoCompleterManager.autoCompletionWidget.updateContentAndShow(pController.getFormatedMatchkingKeywordsList());
             }
