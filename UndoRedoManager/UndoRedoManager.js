@@ -69,7 +69,7 @@ function UndoRedoManager(pMathLineInput) {
                 break;
 
             case ALT_KEYCODE:
-                this.altIsDown = true;
+                this.altIsDown = false;
                 break;
 
             case Y_KEYCODE:
@@ -137,7 +137,12 @@ function UndoRedoManager(pMathLineInput) {
     this.setEvents = () => {
         this.mathLineInput.jQEl.on('keyup', (e) => {
             this.checkIfSpecialKeysAreUpAndSetStates(e.which);
+            // console.log(this.mathLineInput.mathField.latex());
             
+            if (e.which === ALT_KEYCODE) {
+                e.preventDefault();
+            }
+
             //log in typedHistory
             if ((this.isKeyIsUnaffecting(e.which) === false)
                 && (this.ctrlIsDown === false || (this.ctrlIsDown && e.which === V_KEYCODE))) {
@@ -146,8 +151,8 @@ function UndoRedoManager(pMathLineInput) {
         });
     
         this.mathLineInput.jQEl.on('keydown', (e) => {
-            //console.log(e.which)
-            console.log(this.mathLineInput.mathField.latex());
+            // console.log(e.which)
+            // console.log(this.mathLineInput.mathField.latex());
             this.checkIfSpecialKeysAreDownAndSetStates(e.which);
 
             if (e.which === ESCAPE_KEYCODE) {
@@ -156,69 +161,108 @@ function UndoRedoManager(pMathLineInput) {
                 }
             }
 
+            if (e.which === TAB_KEYCODE) {
+                console.log('tab');
+            }
+
             //set shortcuts
-            if (this.ctrlIsDown) {
+            if (this.altIsDown) {
                 e.preventDefault();
 
                 switch (e.which) {
-                    //ctrl + D
+                    //alt + D
                     case 68:
                         this.mathLineInput.mathField.write('\\partial ');
                         break;
 
-                    //ctrl + F
+                    //alt + F
                     case 70:
                         this.mathLineInput.mathField.write('\\forall');
                         break;
 
-                    //ctrl + right
+                    //alt + right
                     case 39:
                         this.mathLineInput.mathField.write('\\rightarrow');
                         break;
         
-                    //ctrl + left
+                    //alt + left
                     case 37:
                         this.mathLineInput.mathField.write('\\leftarrow');
                         break;
         
-                    //ctrl + B
-                    case 66:
+                    //alt + V
+                    case 86:
                         this.mathLineInput.mathField.typedText('\\vec ');
                         break;
 
-                    //ctrl + S
+                    //alt + S
                     case 83:
                         this.mathLineInput.mathField.write('\\sum');
                         break;
 
-                    //ctrl + P
+                    //alt + P
                     case 80:
                         this.mathLineInput.mathField.write('\\prod');
                         break;
         
-                    //ctrl + I
-                    case 73:
+                    //alt + I
+                    case 191:
                         this.mathLineInput.mathField.write('\\in');
                         break;
 
-                    //ctrl + R
+                    //alt + R
                     case 82:
                         this.mathLineInput.mathField.write('\\R');
                         break;
 
-                    //ctrl + Q
+                    //alt + Q
                     case 81:
                         this.mathLineInput.mathField.write('\\Q');
                         break;
 
-                    //ctrl + Z
+                    //alt + Z
                     case 90:
                         this.mathLineInput.mathField.write('\\Z');
                         break;
 
-                    //ctrl + N
+                    //alt + N
                     case 78:
                         this.mathLineInput.mathField.write('\\N');
+                        break;
+                        
+                    //alt + C
+                    case 67:
+                        this.mathLineInput.mathField.write('\\C');
+                        break;
+
+                    //alt + <
+                    case 188:
+                        this.mathLineInput.mathField.write('\\supset');
+                        break;
+
+                    //alt + >
+                    case 190:
+                        this.mathLineInput.mathField.write('\\subseteq');
+                        break;
+
+                    //alt + U
+                    case 85:
+                        this.mathLineInput.mathField.write('\\union');
+                        break;
+
+                    //alt + I
+                    case 73:
+                        this.mathLineInput.mathField.write('\\cap');
+                        break;
+
+                    //alt + ~
+                    case 0:
+                        this.mathLineInput.mathField.write('\\simeq');
+                        break;
+                        
+                    //alt + ~
+                    case 87:
+                        this.mathLineInput.mathField.cmd('\\sqrt');
                         break;
                 }
             }
@@ -239,6 +283,10 @@ function UndoRedoManager(pMathLineInput) {
 
     this.init = () => {
         this.setEvents();
+
+        window.addEventListener('blur', () => {
+            this.altIsDown = false;
+        });
     }
 
     this.init();

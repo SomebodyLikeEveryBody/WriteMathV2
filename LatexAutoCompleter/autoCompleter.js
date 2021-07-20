@@ -70,6 +70,22 @@ function AutoCompleterManager(pInputTextElement) {
         // let lastWordOfcursorLine = inputTextFromStartToCursorPosition.split('\n').pop().split(' ').pop();
 
         // return lastWordOfcursorLine;
+
+        //definition d'un mot:
+        //un mot c'est quelque chose qui est separé du reste du texte:
+        //- par un espace
+        //- par un changement de ligne (exposant ou indice)
+
+        let content = this.inputTextElement.getValue()
+                        .replace(/_/g, ' ')
+                        .replace(/\\/g, ' ')
+                        .replace(/\{/g, ' ')
+                        .replace(/\}/g, ' [END_BRACKET]')
+                        .replace(/\^/g, ' ')
+                        .split(' ');
+
+        console.log(this.inputTextElement.getValue());
+        console.log(content[content.length - 1] !== '[END_BRACKET]' ? content.pop() : content[content.length - 2]);
         return 'cos';
     };
 
@@ -341,6 +357,7 @@ function ClickAndKeyListener(pAutoCompleterManager) {
                         // }
                         
                         this.AutoCompleterManager.autoCompletionWidget.hide();
+                        this.AutoCompleterManager.autoCompletionWidget.isVisible = false;
                         e.preventDefault();
                     }
 
@@ -363,9 +380,6 @@ function ClickAndKeyListener(pAutoCompleterManager) {
     * */
     this.setKeyUpEventsToAutoCompleterManager = function (pController) {
         this.AutoCompleterManager.keyUp((e) => {
-
-            // console.log(this.AutoCompleterManager.inputTextElement.getLatexValue());
-            //console.log(this.AutoCompleterManager.inputTextElement.getLatexValue());
             if (this.AutoCompleterManager.autoCompletionWidget.isVisible === true && e.which !== this.UP_KEY && e.which !== this.DOWN_KEY) {
                 this.AutoCompleterManager.autoCompletionWidget.updateContentAndShow(pController.getFormatedMatchkingKeywordsList());
             }

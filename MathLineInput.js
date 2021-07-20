@@ -43,6 +43,7 @@ function MathLineInput() {
 
     this.undoRedoManager = new UndoRedoManager(this);
     this.getLatexValue = () => this.mathField.latex();
+    this.getValue = () => this.getLatexValue();
     this.setLatexValue = (pValue) => this.mathField.latex(pValue);
     this.addValueAtCursorPosition = (pValue) => this.mathField.typedText(pValue);
     this.isEmpty = () => (this.getLatexValue() === '');
