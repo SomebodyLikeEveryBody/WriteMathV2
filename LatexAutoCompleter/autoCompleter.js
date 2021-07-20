@@ -54,39 +54,33 @@ function AutoCompleterManager(pInputTextElement) {
     * display the suggested keywords according to what the user is currently typing.
     * */
     this.getCurrentlyTypingWord = () => {
-        //pistes
-        // on aura forcement besoin d'avoir la position du curseur
-        //si on n'arrive pas a avoir la position du curseur, on sera obligé de pas utiliser le parsing du latex et de stoquer les input lorsqu'on les tape ==> un peu relou
-        // prendre le latex de start à la position du curseur et le split('\\ ') et ne garder que la derniere chaine
-        // prendre cette chaine et 
-        // le split
-
-        //en vrai je pense qu'on va faire comme ca
-        //quand on keyup ca push le caractere qui a ete tapé dans un array
-        //au fur et a mesure que je tape, ca stocke les caractere pour obtenir le mot qu'on est en train de taper et voila
-        //si on a aucune ctrlkeydown (genre ctrl, shift, alt) et qu'on tape espace ou _ ou ^ ou ( ou ) ou . ou d'autres a rajouter, ca reset l'array et voila
-        //==> implementation ce soir
-         //let inputTextFromStartToCursorPosition = this.getInputStr().substring(0, this.getSelectionStart());
-        // let lastWordOfcursorLine = inputTextFromStartToCursorPosition.split('\n').pop().split(' ').pop();
-
-        // return lastWordOfcursorLine;
-
-        //definition d'un mot:
-        //un mot c'est quelque chose qui est separé du reste du texte:
-        //- par un espace
-        //- par un changement de ligne (exposant ou indice)
-
-        let content = this.inputTextElement.getValue()
+        let words = this.inputTextElement.getValue()
                         .replace(/_/g, ' ')
-                        .replace(/\\/g, ' ')
+                        .replace(/\^/g, ' ')
                         .replace(/\{/g, ' ')
                         .replace(/\}/g, ' [END_BRACKET]')
-                        .replace(/\^/g, ' ')
+                        .replace(/\\left\(/g, ' ')
+                        .replace(/\\right\)/g, ' [END_PARENTHESIS]')
+                        .replace('\\', ' ')
                         .split(' ');
 
-        console.log(this.inputTextElement.getValue());
-        console.log(content[content.length - 1] !== '[END_BRACKET]' ? content.pop() : content[content.length - 2]);
-        return 'cos';
+        // console.log(words);
+        let typingWord = '[END_BRACKET]';
+        while (typingWord === '[END_BRACKET]' || typingWord === '[END_PARENTHESIS]') {
+            typingWord = words.pop();
+        }
+
+        if (typingWord.includes('[END_BRACKET]')) {
+            typingWord = typingWord.replace(/\[END_BRACKET\]/g, '')
+        }
+
+        if (typingWord.includes('[END_PARENTHESIS]')) {
+            typingWord = typingWord.replace(/\[END_PARENTHESIS\]/g, '')
+        }
+
+        // console.log('total: ', this.inputTextElement.getValue());
+        // console.log('last: ', content);
+        return typingWord;
     };
 
     /*
@@ -102,7 +96,7 @@ function AutoCompleterManager(pInputTextElement) {
      * Erase all the content of the AutoCompleterManager and set its content to pValue
      * */
     this.setContent = (pValue) => this.inputTextElement.setLatexValue(pValue);
-    this.addContent = (pValue) => this.inputTextElement.mathField.typedText(pValue);
+    this.addContent = (pValue) => this.inputTextElement.mathField.write(pValue);
 }
 
 /******************************************************************************************
@@ -347,14 +341,9 @@ function ClickAndKeyListener(pAutoCompleterManager) {
                     //let endText = inputStr.substring(this.AutoCompleterManager.getSelectionStart(), inputStr.length);
                     
                     if (selectedKeyword !== '') {
+                        let currentLatextValue = this.AutoCompleterManager.inputTextElement.getLatexValue();
+                        this.AutoCompleterManager.inputTextElement.setLatexValue(currentLatextValue.slice(0, currentLatextValue.length - currentlyTypingWord.length));
                         this.AutoCompleterManager.addContent(selectedKeyword);
-                    
-                        //need to explain that
-                        // if (selectedKeyword.slice(-1) === ")") {
-                        //     this.AutoCompleterManager.putCursorAt(startText.length + selectedKeyword.length - 1);
-                        // } else {
-                        //     this.AutoCompleterManager.putCursorAt(startText.length + selectedKeyword.length);
-                        // }
                         
                         this.AutoCompleterManager.autoCompletionWidget.hide();
                         this.AutoCompleterManager.autoCompletionWidget.isVisible = false;
@@ -446,7 +435,7 @@ function AutoCompleter(pTextareaEl, pList) {
             if (indexOfOpeningParenthesis !== -1) {
                 return el.keyword.substring(0, indexOfOpeningParenthesis + 1) + ')';
             } else {
-                return el.keyword + ' ';
+                return el.keyword;
             }
         });
 

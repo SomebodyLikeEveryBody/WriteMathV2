@@ -1,15 +1,15 @@
 g_keywordsList = [
     { 
-        keyword: "cos", 
-        tags: "cosinus",
+        keyword: "\\forall", 
+        tags: "forall",
     },
     { 
-        keyword: "sin",
-        tags: "cos et trucs",
+        keyword: "\\exists",
+        tags: "existe",
     },
     { 
-        keyword: "tan", 
-        tags: "cos de haricots",
+        keyword: "\\Longrightarrow",
+        tags: "arrow",
     },
 ];
     

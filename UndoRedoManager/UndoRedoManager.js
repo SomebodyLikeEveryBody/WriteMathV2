@@ -260,9 +260,14 @@ function UndoRedoManager(pMathLineInput) {
                         this.mathLineInput.mathField.write('\\simeq');
                         break;
                         
-                    //alt + ~
+                    //alt + W
                     case 87:
                         this.mathLineInput.mathField.cmd('\\sqrt');
+                        break;
+
+                    //alt + E
+                    case 69:
+                        this.mathLineInput.mathField.cmd('\\exists');
                         break;
                 }
             }
