@@ -151,7 +151,7 @@ function UndoRedoManager(pMathLineInput) {
         });
     
         this.mathLineInput.jQEl.on('keydown', (e) => {
-            // console.log(e.which)
+            console.log(e.which)
             // console.log(this.mathLineInput.mathField.latex());
             this.checkIfSpecialKeysAreDownAndSetStates(e.which);
 
@@ -268,6 +268,11 @@ function UndoRedoManager(pMathLineInput) {
                     //alt + E
                     case 69:
                         this.mathLineInput.mathField.cmd('\\exists');
+                        break;
+
+                    //alt + 0
+                    case 48:
+                        this.mathLineInput.mathField.cmd('\\emptyset');
                         break;
                 }
             }
