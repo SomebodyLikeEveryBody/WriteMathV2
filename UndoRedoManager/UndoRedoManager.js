@@ -274,6 +274,21 @@ function UndoRedoManager(pMathLineInput) {
                     case 48:
                         this.mathLineInput.mathField.cmd('\\emptyset');
                         break;
+
+                    //alt + =
+                    case 61:
+                        this.mathLineInput.mathField.cmd('\\neq');
+                        break;
+                    
+                    //alt + A
+                    case 65:
+                        this.mathLineInput.mathField.cmd('\\land');
+                        break;
+
+                    //alt + )
+                    case 79:
+                        this.mathLineInput.mathField.cmd('\\lor');
+                        break;
                 }
             }
                 
