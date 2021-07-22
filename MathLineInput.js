@@ -10,21 +10,10 @@ function MathLineInput() {
     
             enter: () => {
                 if ((this.autocompleter.AutoCompleterManager.autoCompletionWidget.isVisible === false)) {
-                    let newMathLineInput = new MathLineInput();
-                        newMathLineInput.insertAfter(this.jQEl);
-
-                if (this.hasNextMathLineInput()) {
-                    this.nextMathLineInput.previousMathLineInput = newMathLineInput;
-                    newMathLineInput.nextMathLineInput = this.nextMathLineInput;
+                    let newMathLineInput = this.createNewMathLineInputAndAppendAfter(this);
+                
+                    newMathLineInput.focus();
                 }
-
-                this.nextMathLineInput = newMathLineInput;
-                newMathLineInput.previousMathLineInput = this;
-                newMathLineInput.isDeletable = true; 
-
-                this.nextMathLineInput.focus();
-                }
-                    
             },
 
             upOutOf: () => {
@@ -57,6 +46,22 @@ function MathLineInput() {
     this.insertAfter = (pElement) => {this.jQEl.insertAfter(pElement)};
     this.focus = () => (this.mathField.focus());
 
+
+    this.createNewMathLineInputAndAppendAfter = (pMathLineInput) => {
+        let newMathLineInput = new MathLineInput();
+            newMathLineInput.insertAfter(pMathLineInput.jQEl);
+
+            if (pMathLineInput.hasNextMathLineInput()) {
+                pMathLineInput.nextMathLineInput.previousMathLineInput = newMathLineInput;
+                newMathLineInput.nextMathLineInput = pMathLineInput.nextMathLineInput;
+            }
+
+            pMathLineInput.nextMathLineInput = newMathLineInput;
+            newMathLineInput.previousMathLineInput = pMathLineInput;
+            newMathLineInput.isDeletable = true; 
+
+            return newMathLineInput;
+    }
 
     this.getCursorOffset = () => {
         this.mathField.focus();

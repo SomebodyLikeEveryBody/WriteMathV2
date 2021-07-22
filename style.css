@@ -1,7 +1,17 @@
+html
+{
+    height: 100%;
+}
+
+body
+{
+    height:100%;
+}
+
 #content
 {
     width: calc(100% - 30px);
-    height: 500px;
+    height: calc(100% - 50px);
     background-color: lightblue;
     border: black 1px solid;
     padding: 15px;

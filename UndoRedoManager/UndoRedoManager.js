@@ -165,99 +165,140 @@ function UndoRedoManager(pMathLineInput) {
                 console.log('tab');
             }
 
-            //set shortcuts
+            //set alt shortcuts
+            if (this.ctrlIsDown) {
+                // e.preventDefault();
+
+                switch (e.which) {
+                    //ctrl + [
+                    case 219:
+                        e.preventDefault();
+                        this.mathLineInput.mathField.cmd('\\lfloor');
+                        break;
+
+                    //ctrl + ]
+                    case 221:
+                        e.preventDefault();
+                        this.mathLineInput.mathField.cmd('\\rfloor');
+                        break;
+
+                    //ctrl + ]
+                    case 221:
+                        e.preventDefault();
+                        this.mathLineInput.mathField.cmd('\\rfloor');
+                        break;
+
+                    //ctrl + D
+                    case 68:
+                        if ((this.mathLineInput.autocompleter.AutoCompleterManager.autoCompletionWidget.isVisible === false)) {
+                            e.preventDefault();
+                            console.log('ctrl + D');
+
+                            let newMathlineInput = this.mathLineInput.createNewMathLineInputAndAppendAfter(this.mathLineInput);
+                                newMathlineInput.setLatexValue(this.mathLineInput.getLatexValue());
+                                newMathlineInput.focus();
+
+                            this.ctrlIsDown = false;
+                        }
+                        
+                        
+                    //     break;
+                }
+            }
+            
+            //set alt shortcuts
             if (this.altIsDown) {
                 e.preventDefault();
 
                 switch (e.which) {
                     //alt + D
                     case 68:
-                        this.mathLineInput.mathField.write('\\partial ');
+                        this.mathLineInput.mathField.cmd('\\partial');
                         break;
 
                     //alt + F
                     case 70:
-                        this.mathLineInput.mathField.write('\\forall');
+                        this.mathLineInput.mathField.cmd('\\forall');
                         break;
 
                     //alt + right
                     case 39:
-                        this.mathLineInput.mathField.write('\\rightarrow');
+                        this.mathLineInput.mathField.cmd('\\rightarrow');
                         break;
         
                     //alt + left
                     case 37:
-                        this.mathLineInput.mathField.write('\\leftarrow');
+                        this.mathLineInput.mathField.cmd('\\leftarrow');
                         break;
         
                     //alt + V
                     case 86:
-                        this.mathLineInput.mathField.typedText('\\vec ');
+                        this.mathLineInput.mathField.cmd('\\vec');
                         break;
 
                     //alt + S
                     case 83:
-                        this.mathLineInput.mathField.write('\\sum');
+                        this.mathLineInput.mathField.cmd('\\sum');
                         break;
 
                     //alt + P
                     case 80:
-                        this.mathLineInput.mathField.write('\\prod');
+                        this.mathLineInput.mathField.cmd('\\prod');
                         break;
         
-                    //alt + I
-                    case 191:
-                        this.mathLineInput.mathField.write('\\in');
+                    //alt + ;
+                    case 59:
+                        this.mathLineInput.mathField.cmd('\\in');
                         break;
 
                     //alt + R
                     case 82:
-                        this.mathLineInput.mathField.write('\\R');
+                        this.mathLineInput.mathField.cmd('\\R');
                         break;
 
                     //alt + Q
                     case 81:
-                        this.mathLineInput.mathField.write('\\Q');
+                        this.mathLineInput.mathField.cmd('\\Q');
                         break;
 
                     //alt + Z
                     case 90:
-                        this.mathLineInput.mathField.write('\\Z');
+                        this.mathLineInput.mathField.cmd('\\Z');
                         break;
 
                     //alt + N
                     case 78:
-                        this.mathLineInput.mathField.write('\\N');
+                        this.mathLineInput.mathField.cmd('\\N');
                         break;
                         
                     //alt + C
                     case 67:
-                        this.mathLineInput.mathField.write('\\C');
+                        this.mathLineInput.mathField.cmd('\\C');
                         break;
 
                     //alt + <
                     case 188:
-                        this.mathLineInput.mathField.write('\\supset');
+                        this.mathLineInput.mathField.cmd('\\supset');
                         break;
 
                     //alt + >
                     case 190:
-                        this.mathLineInput.mathField.write('\\subseteq');
+                        this.mathLineInput.mathField.cmd('\\subseteq');
                         break;
 
                     //alt + U
                     case 85:
-                        this.mathLineInput.mathField.write('\\union');
+                        this.mathLineInput.mathField.cmd('\\union');
                         break;
 
                     //alt + I
                     case 73:
-                        this.mathLineInput.mathField.write('\\cap');
+                        this.mathLineInput.mathField.cmd('\\cap');
                         break;
 
                     //alt + ~
                     case 0:
-                        this.mathLineInput.mathField.write('\\simeq');
+                        this.mathLineInput.mathField.cmd('\\simeq');
                         break;
                         
                     //alt + W
@@ -288,6 +329,36 @@ function UndoRedoManager(pMathLineInput) {
                     //alt + )
                     case 79:
                         this.mathLineInput.mathField.cmd('\\lor');
+                        break;
+
+                    //alt + -
+                    case 173:
+                        this.mathLineInput.mathField.cmd('\\overline');
+                        break;
+
+                    //alt + T
+                    case 84:
+                        this.mathLineInput.mathField.cmd('\\perp');
+                        break;
+                        
+                    //alt + L
+                    case 76:
+                        this.mathLineInput.mathField.cmd('\\parallel');
+                        break;
+
+                    //alt + |
+                    case 220:
+                        this.mathLineInput.mathField.cmd('\|');
+                        break;
+
+                    //alt + [
+                    case 219:
+                        this.mathLineInput.mathField.cmd('\\lceil');
+                        break;
+
+                    //alt +]
+                    case 221:
+                        this.mathLineInput.mathField.cmd('\\rceil');
                         break;
                 }
             }

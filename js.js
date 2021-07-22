@@ -1,3 +1,7 @@
+//to translate the given textNode into proper math
+//MQ.StaticMath(window.document.getElementById('problem'));
+
+
 /*
 todo:
 
@@ -8,9 +12,6 @@ todo:
 */
 
 const MQ = MathQuill.getInterface(2);
-
-//to translate the given textNode into proper math
-//MQ.StaticMath(window.document.getElementById('problem'));
 
 mathLineInputArray = [];
 for (let i = 0; i < 5; i++) {

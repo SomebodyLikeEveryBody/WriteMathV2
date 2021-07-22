@@ -124,7 +124,115 @@ g_keywordsList = [
         tags: "arrow",
     },
     { 
-        keyword: "\\iff ",
+        keyword: "\\iff",
         tags: "equiv iff",
+    },
+    { 
+        keyword: "\\overline ",
+        tags: "overline",
+    },
+    { 
+        keyword: "\\perp",
+        tags: "perpendicular",
+    },
+    { 
+        keyword: "\\parallel",
+        tags: "parallel",
+    },
+    { 
+        keyword: "\\nparallel",
+        tags: "parallel",
+    },
+    { 
+        keyword: "\\lceil",
+        tags: "ceil approx round",
+    },
+    { 
+        keyword: "\\rceil",
+        tags: "ceil approx round",
+    },
+    { 
+        keyword: "\\lfloor",
+        tags: "floor approx round",
+    },
+    { 
+        keyword: "\\rfloor",
+        tags: "floor approx round",
+    },
+    { 
+        keyword: "\\rightarrow",
+        tags: "right arrow",
+    },
+    { 
+        keyword: "\\mapsto",
+        tags: "arrow",
+    },
+    { 
+        keyword: "\\leftarrow",
+        tags: "left arrow",
+    },
+    { 
+        keyword: "\\Rightarrow",
+        tags: "right arrow",
+    },
+    { 
+        keyword: "\\Leftarrow",
+        tags: "left arrow",
+    },
+    { 
+        keyword: "\\longrightarrow",
+        tags: "long right arrow",
+    },
+    { 
+        keyword: "\\longleftarrow",
+        tags: "long left arrow",
+    },
+    { 
+        keyword: "\\Longrightarrow",
+        tags: "long right arrow",
+    },
+    { 
+        keyword: "\\Longleftarrow",
+        tags: "long left arrow",
+    },
+    { 
+        keyword: "\\uparrow",
+        tags: "up arrow",
+    },
+    { 
+        keyword: "\\downarrow",
+        tags: "down arrow",
+    },
+    { 
+        keyword: "\\updownarrow",
+        tags: "up down arrow",
+    },
+    { 
+        keyword: "\\Uparrow",
+        tags: "up arrow",
+    },
+    { 
+        keyword: "\\Downarrow",
+        tags: "down arrow",
+    },
+    { 
+        keyword: "\\Updownarrow",
+        tags: "up down arrow",
+    },
+    { 
+        keyword: "\\partial",
+        tags: "round d partial",
+    },
+    { 
+        keyword: "\\nabla",
+        tags: "del nabla",
+    },
+    { 
+        keyword: "\\infty",
+        tags: "infinity",
+    },
+    { 
+        keyword: "\\downarrow",
+        tags: "down arrow",
     },
 ];
