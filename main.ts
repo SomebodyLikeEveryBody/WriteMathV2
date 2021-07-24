@@ -1,5 +1,4 @@
 declare var MathQuill: any;
-declare var $: any;
 
 function main() {
 
