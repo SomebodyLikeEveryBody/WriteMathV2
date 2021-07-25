@@ -200,18 +200,18 @@ class MathLineInput {
     
                     this.erase();
                 }
-                
+
             //press backspace
             } else if (e.which === KeyCodes.BACKSPACE_KEY && this.isDeletable) {
                 if (this.hasPreviousMathLineInput()) {
                     this.erase();
                     this.previousMathLineInput.focus();
 
-                } else if (this.isEmpty()) {
-                    this.isDeletable = true;
-                } else {
-                    this.isDeletable = false;
                 }
+            } else if (this.isEmpty()) {
+                this.isDeletable = true;
+            } else {
+                this.isDeletable = false;
             }
         });
     }

@@ -384,17 +384,17 @@ class ClickAndKeyListener {
              * Ctrl key down + SPACE
              * */
 
-            console.log('ok')
             if (this._IsCtrlKeyIsDown) {
-            
                 if (e.which === KeyCodes.SPACE_KEY) {
                     if (this._autoCompleterManager.isVisible() === true) {
                         this._autoCompleterManager.hide();
                         this._autoCompleterManager.setVisibility(false);
 
                     } else {
+                        console.log(pController.getFormatedMatchkingKeywordsList());
                         let keywordsList = pController.getFormatedMatchkingKeywordsList();
-                        this._autoCompleterManager.show();
+                        // this._autoCompleterManager.show();
+                        this._autoCompleterManager.updateContentAndShow(keywordsList);
                         this._autoCompleterManager.setVisibility(true);
                     }
                 }

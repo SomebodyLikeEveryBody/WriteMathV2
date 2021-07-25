@@ -19,6 +19,7 @@ enum KeyCodes {
     DOWNARROW_KEY = 40,
     DELETE_KEY = 46,
     N0_KEY = 48,
+    EIGHT_KEY = 56,
     SEMICOLON_KEY = 59,
     EQUAL_KEY = 61,
     A_KEY = 65,

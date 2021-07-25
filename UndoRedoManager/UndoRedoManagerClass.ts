@@ -381,6 +381,11 @@ class UndoRedoManager {
             case KeyCodes.CLOSEHOOK_KEY:
                 this._mathLineInput.appendCmdAtCursorPosition('\\rceil');
                 break;
+
+            //alt + *
+            case KeyCodes.EIGHT_KEY:
+                this._mathLineInput.appendCmdAtCursorPosition('\\star');
+                break;
         }
     }
 }
