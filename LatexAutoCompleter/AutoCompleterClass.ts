@@ -383,6 +383,8 @@ class ClickAndKeyListener {
             /*
              * Ctrl key down + SPACE
              * */
+
+            console.log('ok')
             if (this._IsCtrlKeyIsDown) {
             
                 if (e.which === KeyCodes.SPACE_KEY) {
