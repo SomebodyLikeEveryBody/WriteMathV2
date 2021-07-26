@@ -41,6 +41,10 @@ class UndoRedoManager {
         this.setEvents();
     }
 
+    protected setCtrlToDown(): void {
+        this._ctrlIsDown = true;   
+    }
+
     protected rearrangeTypedHistoryArray(): void {
         if (this._typedHistory.length > this._buffSize) {
             const sizeOverflow: Number = ((this._typedHistory.length) - this._buffSize.valueOf());
@@ -146,7 +150,7 @@ class UndoRedoManager {
         this.setKeyDownEvents();
 
         window.addEventListener('blur', () => {
-            this._altIsDown = false;
+            this.setKeysToDown();
         });
     }
 
@@ -200,6 +204,13 @@ class UndoRedoManager {
         });
     }
 
+    protected setKeysToDown(): void {
+        this._ctrlIsDown = false;
+        this._altIsDown = false;
+        this._YIsDown = false;
+        this._ZIsDown = false;
+    }
+
     protected bindCtrlShortcuts(pEventObj: any): void {
         switch (pEventObj.which) {
 
@@ -222,7 +233,10 @@ class UndoRedoManager {
 
                     const newMathlineInput = this._mathLineInput.createNewMathLineInputAndAppendAfter(this._mathLineInput);
                         newMathlineInput.setValue(this._mathLineInput.value());
+                        console.log(this._mathLineInput.value());
+                        this.setKeysToDown();
                         newMathlineInput.focus();
+                        newMathlineInput.setCtrlToDown();
                 }
                 
                 break;
@@ -384,7 +398,7 @@ class UndoRedoManager {
 
             //alt + *
             case KeyCodes.EIGHT_KEY:
-                this._mathLineInput.appendCmdAtCursorPosition('\\star');
+                this._mathLineInput.appendCmdAtCursorPosition('\\star   ');
                 break;
         }
     }

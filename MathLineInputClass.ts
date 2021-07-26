@@ -130,6 +130,10 @@ class MathLineInput {
         this._jQEl.insertAfter(pElement);
     }
 
+    public setCtrlToDown(): void {
+        this._undoRedoManager.setCtrlToDown();
+    }
+
     public createNewMathLineInputAndAppendAfter(pMathLineInput: MathLineInput): MathLineInput {
         const newMathLineInput = new MathLineInput();
             newMathLineInput.insertAfter(pMathLineInput.jQEl);
