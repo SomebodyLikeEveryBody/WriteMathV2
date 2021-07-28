@@ -115,7 +115,7 @@ class AutoCompleterManager {
                         .replace('\\', ' ')
                         .split(' ');
 
-        // console.log(words);
+        console.log(words);
         let typingWord = '[END_BRACKET]';
         while (typingWord === '[END_BRACKET]' || typingWord === '[END_PARENTHESIS]') {
             typingWord = words.pop();
@@ -391,9 +391,8 @@ class ClickAndKeyListener {
                         this._autoCompleterManager.setVisibility(false);
 
                     } else {
-                        console.log(pController.getFormatedMatchkingKeywordsList());
-                        let keywordsList = pController.getFormatedMatchkingKeywordsList();
-                        // this._autoCompleterManager.show();
+                        // console.log(pController.getFormatedMatchkingKeywordsList());
+                        let keywordsList = pController.getFormatedMatchkingKeywordsList();  
                         this._autoCompleterManager.updateContentAndShow(keywordsList);
                         this._autoCompleterManager.setVisibility(true);
                     }
@@ -403,11 +402,7 @@ class ClickAndKeyListener {
              * Ctrl key is up and auto-completer widget is visibles
              * */
             } else if (this._autoCompleterManager.isVisible()) {
-                if (e.which === KeyCodes.ESCAPE_KEY) {
-                    this._autoCompleterManager.hide();
-                    this._autoCompleterManager.setVisibility(false);
-
-                } else if (e.which === KeyCodes.ENTER_KEY) {
+                if (e.which === KeyCodes.ENTER_KEY) {
                     const selectedKeyword = this._autoCompleterManager.getSelectedKeyword();
                     const currentlyTypingWord = this._autoCompleterManager.getCurrentlyTypingWord();
                     const inputStr = this._autoCompleterManager.getInputStr();

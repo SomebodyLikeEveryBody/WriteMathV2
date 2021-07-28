@@ -476,6 +476,14 @@ var MathLineInput = /** @class */ (function () {
                     _this.previousMathLineInput.focus();
                 }
             }
+            else if (e.which === KeyCodes.ESCAPE_KEY) {
+                if (_this.autoCompleterIsVisible()) {
+                    _this._autoCompleter.hide();
+                }
+                else {
+                    _this.blur();
+                }
+            }
             else if (_this.isEmpty()) {
                 _this.isDeletable = true;
             }
@@ -628,13 +636,6 @@ var UndoRedoManager = /** @class */ (function () {
         var _this = this;
         this._mathLineInput.keyDown(function (e) {
             _this.checkIfSpecialKeysAreDownAndSetStates(e.which);
-            // Escape ==> blur
-            if (e.which === KeyCodes.ESCAPE_KEY) {
-                console.log(_this._mathLineInput.autoCompleterIsVisible());
-                if (!_this._mathLineInput.autoCompleterIsVisible()) {
-                    _this._mathLineInput.blur();
-                }
-            }
             //set CTRL shortcuts
             if (_this._ctrlIsDown) {
                 _this.bindCtrlShortcuts(e);
@@ -916,7 +917,7 @@ var AutoCompleterManager = /** @class */ (function () {
             .replace(/\\right\)/g, ' [END_PARENTHESIS]')
             .replace('\\', ' ')
             .split(' ');
-        // console.log(words);
+        console.log(words);
         var typingWord = '[END_BRACKET]';
         while (typingWord === '[END_BRACKET]' || typingWord === '[END_PARENTHESIS]') {
             typingWord = words.pop();
@@ -1159,9 +1160,8 @@ var ClickAndKeyListener = /** @class */ (function () {
                         _this._autoCompleterManager.setVisibility(false);
                     }
                     else {
-                        console.log(pController.getFormatedMatchkingKeywordsList());
+                        // console.log(pController.getFormatedMatchkingKeywordsList());
                         var keywordsList = pController.getFormatedMatchkingKeywordsList();
-                        // this._autoCompleterManager.show();
                         _this._autoCompleterManager.updateContentAndShow(keywordsList);
                         _this._autoCompleterManager.setVisibility(true);
                     }
@@ -1171,11 +1171,7 @@ var ClickAndKeyListener = /** @class */ (function () {
                  * */
             }
             else if (_this._autoCompleterManager.isVisible()) {
-                if (e.which === KeyCodes.ESCAPE_KEY) {
-                    _this._autoCompleterManager.hide();
-                    _this._autoCompleterManager.setVisibility(false);
-                }
-                else if (e.which === KeyCodes.ENTER_KEY) {
+                if (e.which === KeyCodes.ENTER_KEY) {
                     var selectedKeyword = _this._autoCompleterManager.getSelectedKeyword();
                     var currentlyTypingWord = _this._autoCompleterManager.getCurrentlyTypingWord();
                     var inputStr = _this._autoCompleterManager.getInputStr();
@@ -1244,6 +1240,10 @@ var AutoCompleter = /** @class */ (function () {
     }
     AutoCompleter.prototype.isVisible = function () {
         return this._autoCompleterManager.isVisible();
+    };
+    AutoCompleter.prototype.hide = function () {
+        this._autoCompleterManager.hide();
+        this._autoCompleterManager.setVisibility(false);
     };
     /*
     * AutoCompleter.getMatchkingKeywordsList():

@@ -214,7 +214,6 @@ class MathLineInput {
                 if (this.hasPreviousMathLineInput() && this.isEmpty()) {
                     this.erase();
                     this.previousMathLineInput.focus();
-
                 }
             } else if (e.which === KeyCodes.ESCAPE_KEY) {
                 if (this.autoCompleterIsVisible()) {
