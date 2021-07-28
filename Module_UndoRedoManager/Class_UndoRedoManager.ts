@@ -173,14 +173,6 @@ class UndoRedoManager {
         this._mathLineInput.keyDown((e) => {
             this.checkIfSpecialKeysAreDownAndSetStates(e.which);
 
-            // Escape ==> blur
-            if (e.which === KeyCodes.ESCAPE_KEY) {
-                console.log(this._mathLineInput.autoCompleterIsVisible())
-                if (!this._mathLineInput.autoCompleterIsVisible()) {
-                    this._mathLineInput.blur();
-                }
-            }
-
             //set CTRL shortcuts
             if (this._ctrlIsDown) {
                 this.bindCtrlShortcuts(e);

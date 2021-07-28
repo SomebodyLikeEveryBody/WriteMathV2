@@ -486,6 +486,11 @@ class AutoCompleter {
         return this._autoCompleterManager.isVisible();
     }
 
+    public hide(): void {
+        this._autoCompleterManager.hide();
+        this._autoCompleterManager.setVisibility(false);
+    }
+
     
     /*
     * AutoCompleter.getMatchkingKeywordsList():

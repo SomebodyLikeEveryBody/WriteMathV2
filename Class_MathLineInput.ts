@@ -216,6 +216,12 @@ class MathLineInput {
                     this.previousMathLineInput.focus();
 
                 }
+            } else if (e.which === KeyCodes.ESCAPE_KEY) {
+                if (this.autoCompleterIsVisible()) {
+                    this._autoCompleter.hide()
+                } else {
+                    this.blur();
+                }
             } else if (this.isEmpty()) {
                 this.isDeletable = true;
             } else {
