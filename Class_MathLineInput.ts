@@ -17,7 +17,7 @@ class MathLineInput {
         this._isDeletable = true;
 
         this._mathField = MathQuill.getInterface(2).MathField(this._jQEl[0], {
-            autoCommands: 'iff implies infinity not or and union notin forall nabla Angstrom alpha beta gamma Gamma delta Delta zeta eta theta Theta iota kappa lambda mu nu pi rho sigma tau phi chi psi Psi omega Omega', //add ctrl + E for varepsilon and ctrl + u for upsilon, see for Upsilon 
+            autoCommands: 'implies infinity lor land neg union notin forall nabla Angstrom alpha beta gamma Gamma delta Delta zeta eta theta Theta iota kappa lambda mu nu pi rho sigma tau phi chi psi Psi omega Omega', //add ctrl + E for varepsilon and ctrl + u for upsilon, see for Upsilon 
             autoOperatorNames: 'ln log det min max mod lcm gcd lim sin cos tan sec Function isEven isOdd divides Given',
             handlers: {
                 edit: () => {
@@ -54,7 +54,7 @@ class MathLineInput {
         this._undoRedoManager = new UndoRedoManager(this);
         
 
-        this.setDeleteIfBackSpaceInEmptyFieldIsTypedEvent();
+        this.setEvents();
     }
 
     /* * * * * * * * * * * * 
@@ -175,6 +175,7 @@ class MathLineInput {
             this.nextMathLineInput.previousMathLineInput = this.previousMathLineInput;
         }
 
+        this._autoCompleter.hide();
         this._jQEl.remove();
     };
 
@@ -192,6 +193,22 @@ class MathLineInput {
 
     public blur(): void {
         this._mathField.blur();
+    }
+
+    public deleteLeftWord(pWordLen: number): void {
+        for (let i = 0; i< pWordLen; i++) {
+            this._mathField.keystroke('Shift-Left');
+        }
+
+        this._mathField.keystroke('Backspace');
+    }
+
+    protected setEvents(): void {
+        this.setDeleteIfBackSpaceInEmptyFieldIsTypedEvent();
+
+        this._jQEl.focusout(() => {
+            this._autoCompleter.hide();
+        });
     }
 
     protected setDeleteIfBackSpaceInEmptyFieldIsTypedEvent() {

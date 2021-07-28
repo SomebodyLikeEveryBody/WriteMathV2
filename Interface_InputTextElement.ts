@@ -9,4 +9,5 @@ interface InputTextElement {
     keyDown(pFunction: Function): void;
     keyUp(pFunction: Function): void;
     blur(): void;
+    deleteLeftWord(pWordLen: Number): void;
 }

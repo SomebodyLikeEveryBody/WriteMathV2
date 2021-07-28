@@ -5,7 +5,7 @@ interface JQueryElement {
     insertAfter(pElement: JQueryElement): void;
     remove(): void;
     hide(pTime: number): void;
-    fadeOut(pTime: Number, pFunc: Function): void;
+    fadeOut(pTime: Number, pFunction: Function): void;
     html(pStr: String): void;
     find(pSelector: String): JQueryElement;
     css(pStyles: Object): JQueryElement;
@@ -18,4 +18,5 @@ interface JQueryElement {
     prev(): JQueryElement;
     keydown(pFunction: Function): JQueryElement;
     keyup(pFunction: Function): JQueryElement;
+    focusout(pFunction: Function): JQueryElement;
 }

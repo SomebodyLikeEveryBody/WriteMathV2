@@ -23,6 +23,10 @@ class AutoCompleterManager {
         this._inputTextElement.keyDown(pFunction);
     }
 
+    public deleteLeftWord(pWordLen: Number): void {
+        this._inputTextElement.deleteLeftWord(pWordLen);
+    }
+
     public updateContentAndShow(pKwList: String[]): void {
         this._autoCompletionWidget.updateContentAndShow(pKwList);
 
@@ -414,6 +418,7 @@ class ClickAndKeyListener {
                         const currentLatextValue = this._autoCompleterManager.getValueFromInputText();
 
                         // this._autoCompleterManager.setValueToInputText(currentLatextValue.slice(0, currentLatextValue.length - currentlyTypingWord.length));
+                        this._autoCompleterManager.deleteLeftWord(this._autoCompleterManager.getCurrentlyTypingWord().length);
                         this._autoCompleterManager.addContent(selectedKeyword);
                         this._autoCompleterManager.hide();
                         this._autoCompleterManager.setVisibility(false);

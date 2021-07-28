@@ -297,7 +297,7 @@ var MathLineInput = /** @class */ (function () {
         this._previousMathLineInput = null;
         this._isDeletable = true;
         this._mathField = MathQuill.getInterface(2).MathField(this._jQEl[0], {
-            autoCommands: 'iff implies infinity not or and union notin forall nabla Angstrom alpha beta gamma Gamma delta Delta zeta eta theta Theta iota kappa lambda mu nu pi rho sigma tau phi chi psi Psi omega Omega',
+            autoCommands: 'implies infinity lor land neg union notin forall nabla Angstrom alpha beta gamma Gamma delta Delta zeta eta theta Theta iota kappa lambda mu nu pi rho sigma tau phi chi psi Psi omega Omega',
             autoOperatorNames: 'ln log det min max mod lcm gcd lim sin cos tan sec Function isEven isOdd divides Given',
             handlers: {
                 edit: function () {
@@ -326,7 +326,7 @@ var MathLineInput = /** @class */ (function () {
         });
         this._autoCompleter = new AutoCompleter(this, g_keywordsList);
         this._undoRedoManager = new UndoRedoManager(this);
-        this.setDeleteIfBackSpaceInEmptyFieldIsTypedEvent();
+        this.setEvents();
     }
     Object.defineProperty(MathLineInput.prototype, "jQEl", {
         /* * * * * * * * * * * *
@@ -439,6 +439,7 @@ var MathLineInput = /** @class */ (function () {
         if (this.hasNextMathLineInput()) {
             this.nextMathLineInput.previousMathLineInput = this.previousMathLineInput;
         }
+        this._autoCompleter.hide();
         this._jQEl.remove();
     };
     ;
@@ -453,6 +454,19 @@ var MathLineInput = /** @class */ (function () {
     };
     MathLineInput.prototype.blur = function () {
         this._mathField.blur();
+    };
+    MathLineInput.prototype.deleteLeftWord = function (pWordLen) {
+        for (var i = 0; i < pWordLen; i++) {
+            this._mathField.keystroke('Shift-Left');
+        }
+        this._mathField.keystroke('Backspace');
+    };
+    MathLineInput.prototype.setEvents = function () {
+        var _this = this;
+        this.setDeleteIfBackSpaceInEmptyFieldIsTypedEvent();
+        this._jQEl.focusout(function () {
+            _this._autoCompleter.hide();
+        });
     };
     MathLineInput.prototype.setDeleteIfBackSpaceInEmptyFieldIsTypedEvent = function () {
         var _this = this;
@@ -841,6 +855,9 @@ var AutoCompleterManager = /** @class */ (function () {
     AutoCompleterManager.prototype.keyDown = function (pFunction) {
         this._inputTextElement.keyDown(pFunction);
     };
+    AutoCompleterManager.prototype.deleteLeftWord = function (pWordLen) {
+        this._inputTextElement.deleteLeftWord(pWordLen);
+    };
     AutoCompleterManager.prototype.updateContentAndShow = function (pKwList) {
         this._autoCompletionWidget.updateContentAndShow(pKwList);
     };
@@ -1160,7 +1177,6 @@ var ClickAndKeyListener = /** @class */ (function () {
                         _this._autoCompleterManager.setVisibility(false);
                     }
                     else {
-                        // console.log(pController.getFormatedMatchkingKeywordsList());
                         var keywordsList = pController.getFormatedMatchkingKeywordsList();
                         _this._autoCompleterManager.updateContentAndShow(keywordsList);
                         _this._autoCompleterManager.setVisibility(true);
@@ -1177,9 +1193,11 @@ var ClickAndKeyListener = /** @class */ (function () {
                     var inputStr = _this._autoCompleterManager.getInputStr();
                     //let startText = inputStr.substring(0, this.AutoCompleterManager.getSelectionStart() - currentlyTypingWord.length);
                     //let endText = inputStr.substring(this.AutoCompleterManager.getSelectionStart(), inputStr.length);
+                    console.log(selectedKeyword);
                     if (selectedKeyword !== '') {
                         var currentLatextValue = _this._autoCompleterManager.getValueFromInputText();
                         // this._autoCompleterManager.setValueToInputText(currentLatextValue.slice(0, currentLatextValue.length - currentlyTypingWord.length));
+                        _this._autoCompleterManager.deleteLeftWord(_this._autoCompleterManager.getCurrentlyTypingWord().length);
                         _this._autoCompleterManager.addContent(selectedKeyword);
                         _this._autoCompleterManager.hide();
                         _this._autoCompleterManager.setVisibility(false);
