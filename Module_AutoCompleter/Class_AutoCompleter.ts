@@ -391,8 +391,7 @@ class ClickAndKeyListener {
                         this._autoCompleterManager.setVisibility(false);
 
                     } else {
-                        // console.log(pController.getFormatedMatchkingKeywordsList());
-                        let keywordsList = pController.getFormatedMatchkingKeywordsList();  
+                        const keywordsList = pController.getFormatedMatchkingKeywordsList();  
                         this._autoCompleterManager.updateContentAndShow(keywordsList);
                         this._autoCompleterManager.setVisibility(true);
                     }
@@ -409,8 +408,11 @@ class ClickAndKeyListener {
                     //let startText = inputStr.substring(0, this.AutoCompleterManager.getSelectionStart() - currentlyTypingWord.length);
                     //let endText = inputStr.substring(this.AutoCompleterManager.getSelectionStart(), inputStr.length);
                     
+                    console.log(selectedKeyword);
+
                     if (selectedKeyword !== '') {
                         const currentLatextValue = this._autoCompleterManager.getValueFromInputText();
+
                         // this._autoCompleterManager.setValueToInputText(currentLatextValue.slice(0, currentLatextValue.length - currentlyTypingWord.length));
                         this._autoCompleterManager.addContent(selectedKeyword);
                         this._autoCompleterManager.hide();
