@@ -7,8 +7,8 @@ class MathLineInput {
     protected _previousMathLineInput: MathLineInput;
     protected _isDeletable: Boolean;
     protected _mathField: any;
-    protected _autoCompleter: any;
-    protected _undoRedoManager: any;
+    protected _autoCompleter: AutoCompleter;
+    protected _undoRedoManager: UndoRedoManager;
 
     public constructor() {
         this._jQEl = $('<p class="mathLineInput"></p>');
@@ -60,7 +60,7 @@ class MathLineInput {
     /* * * * * * * * * * * * 
      * Getters and setters * 
      * * * * * * * * * * * */
-    public get jQEl (): any {
+    public get jQEl (): JQueryElement {
         return this._jQEl;
 	}
 
@@ -119,7 +119,7 @@ class MathLineInput {
         return this.value() === '';
     }
     
-    public appendTo(pElement: any) {        
+    public appendTo(pElement: JQueryElement) {        
         this._jQEl.appendTo(pElement);
     }
 
@@ -131,7 +131,7 @@ class MathLineInput {
         return this._nextMathLineInput !== null
     }
 
-    public insertAfter(pElement: any): void {
+    public insertAfter(pElement: JQueryElement): void {
         this._jQEl.insertAfter(pElement);
     }
 
@@ -179,12 +179,11 @@ class MathLineInput {
     };
 
     public keyDown(pFunction: Function): void {
-        this.jQEl.on('keydown', (e) => pFunction(e));
-
+        this.jQEl.keydown((e) => pFunction(e));
     }
 
     public keyUp(pFunction: Function): void {
-        this.jQEl.on('keyup', (e) => pFunction(e));
+        this.jQEl.keyup((e) => pFunction(e));
     }
 
     public autoCompleterIsVisible(): Boolean {

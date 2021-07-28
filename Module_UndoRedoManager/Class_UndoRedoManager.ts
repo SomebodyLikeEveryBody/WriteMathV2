@@ -41,7 +41,7 @@ class UndoRedoManager {
         this.setEvents();
     }
 
-    protected setCtrlToDown(): void {
+    public setCtrlToDown(): void {
         this._ctrlIsDown = true;   
     }
 

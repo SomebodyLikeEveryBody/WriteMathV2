@@ -16,4 +16,6 @@ interface JQueryElement {
     text(): String;
     next(): JQueryElement;
     prev(): JQueryElement;
+    keydown(pFunction: Function): JQueryElement;
+    keyup(pFunction: Function): JQueryElement;
 }

@@ -443,10 +443,10 @@ var MathLineInput = /** @class */ (function () {
     };
     ;
     MathLineInput.prototype.keyDown = function (pFunction) {
-        this.jQEl.on('keydown', function (e) { return pFunction(e); });
+        this.jQEl.keydown(function (e) { return pFunction(e); });
     };
     MathLineInput.prototype.keyUp = function (pFunction) {
-        this.jQEl.on('keyup', function (e) { return pFunction(e); });
+        this.jQEl.keyup(function (e) { return pFunction(e); });
     };
     MathLineInput.prototype.autoCompleterIsVisible = function () {
         return this._autoCompleter.isVisible();
