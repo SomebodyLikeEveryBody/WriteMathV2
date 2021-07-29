@@ -119,7 +119,7 @@ class AutoCompleterManager {
                         .replace('\\', ' ')
                         .split(' ');
 
-        console.log(words);
+        // console.log(words);
         let typingWord = '[END_BRACKET]';
         while (typingWord === '[END_BRACKET]' || typingWord === '[END_PARENTHESIS]') {
             typingWord = words.pop();
@@ -158,6 +158,10 @@ class AutoCompleterManager {
 
     public addContent(pValue: String): void {
         this._inputTextElement.appendValueAtCursorPosition(pValue);
+    }
+
+    public addCmd(pValue: String): void {
+        this._inputTextElement.appendCmdAtCursorPosition(pValue);
     }
 }
 
@@ -395,9 +399,14 @@ class ClickAndKeyListener {
                         this._autoCompleterManager.setVisibility(false);
 
                     } else {
-                        const keywordsList = pController.getFormatedMatchkingKeywordsList();  
-                        this._autoCompleterManager.updateContentAndShow(keywordsList);
-                        this._autoCompleterManager.setVisibility(true);
+                        const keywordsList = pController.getFormatedMatchkingKeywordsList();
+
+                        if (keywordsList.length === 1) {
+                            this.writeKeyword(keywordsList[0]);
+                        } else {
+                            this._autoCompleterManager.updateContentAndShow(keywordsList);
+                            this._autoCompleterManager.setVisibility(true);    
+                        }                        
                     }
                 }
 
@@ -407,19 +416,15 @@ class ClickAndKeyListener {
             } else if (this._autoCompleterManager.isVisible()) {
                 if (e.which === KeyCodes.ENTER_KEY) {
                     const selectedKeyword = this._autoCompleterManager.getSelectedKeyword();
-                    const currentlyTypingWord = this._autoCompleterManager.getCurrentlyTypingWord();
-                    const inputStr = this._autoCompleterManager.getInputStr();
+                    // const currentlyTypingWord = this._autoCompleterManager.getCurrentlyTypingWord();
+                    // const inputStr = this._autoCompleterManager.getInputStr();
                     //let startText = inputStr.substring(0, this.AutoCompleterManager.getSelectionStart() - currentlyTypingWord.length);
                     //let endText = inputStr.substring(this.AutoCompleterManager.getSelectionStart(), inputStr.length);
                     
-                    console.log(selectedKeyword);
+                    // console.log(selectedKeyword);
 
                     if (selectedKeyword !== '') {
-                        const currentLatextValue = this._autoCompleterManager.getValueFromInputText();
-
-                        // this._autoCompleterManager.setValueToInputText(currentLatextValue.slice(0, currentLatextValue.length - currentlyTypingWord.length));
-                        this._autoCompleterManager.deleteLeftWord(this._autoCompleterManager.getCurrentlyTypingWord().length);
-                        this._autoCompleterManager.addContent(selectedKeyword);
+                        this.writeKeyword(selectedKeyword);
                         this._autoCompleterManager.hide();
                         this._autoCompleterManager.setVisibility(false);
                         e.preventDefault();
@@ -435,6 +440,16 @@ class ClickAndKeyListener {
                 }
             }
         });
+    }
+
+    protected writeKeyword(pSelectedKeyword: String): void {
+        this._autoCompleterManager.deleteLeftWord(this._autoCompleterManager.getCurrentlyTypingWord().length);
+
+        if (pSelectedKeyword[0] === '\\') {
+            this._autoCompleterManager.addCmd(pSelectedKeyword);
+        } else {
+            this._autoCompleterManager.addContent(pSelectedKeyword);
+        }
     }
 
     /*

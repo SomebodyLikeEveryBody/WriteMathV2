@@ -288,6 +288,10 @@ var g_keywordsList = [
         keyword: "\\downarrow",
         tags: "down arrow",
     },
+    {
+        keyword: "Function",
+        tags: "function",
+    },
 ];
 var MathLineInput = /** @class */ (function () {
     function MathLineInput() {
@@ -934,7 +938,7 @@ var AutoCompleterManager = /** @class */ (function () {
             .replace(/\\right\)/g, ' [END_PARENTHESIS]')
             .replace('\\', ' ')
             .split(' ');
-        console.log(words);
+        // console.log(words);
         var typingWord = '[END_BRACKET]';
         while (typingWord === '[END_BRACKET]' || typingWord === '[END_PARENTHESIS]') {
             typingWord = words.pop();
@@ -968,6 +972,9 @@ var AutoCompleterManager = /** @class */ (function () {
     };
     AutoCompleterManager.prototype.addContent = function (pValue) {
         this._inputTextElement.appendValueAtCursorPosition(pValue);
+    };
+    AutoCompleterManager.prototype.addCmd = function (pValue) {
+        this._inputTextElement.appendCmdAtCursorPosition(pValue);
     };
     return AutoCompleterManager;
 }());
@@ -1178,8 +1185,13 @@ var ClickAndKeyListener = /** @class */ (function () {
                     }
                     else {
                         var keywordsList = pController.getFormatedMatchkingKeywordsList();
-                        _this._autoCompleterManager.updateContentAndShow(keywordsList);
-                        _this._autoCompleterManager.setVisibility(true);
+                        if (keywordsList.length === 1) {
+                            _this.writeKeyword(keywordsList[0]);
+                        }
+                        else {
+                            _this._autoCompleterManager.updateContentAndShow(keywordsList);
+                            _this._autoCompleterManager.setVisibility(true);
+                        }
                     }
                 }
                 /*
@@ -1189,16 +1201,13 @@ var ClickAndKeyListener = /** @class */ (function () {
             else if (_this._autoCompleterManager.isVisible()) {
                 if (e.which === KeyCodes.ENTER_KEY) {
                     var selectedKeyword = _this._autoCompleterManager.getSelectedKeyword();
-                    var currentlyTypingWord = _this._autoCompleterManager.getCurrentlyTypingWord();
-                    var inputStr = _this._autoCompleterManager.getInputStr();
+                    // const currentlyTypingWord = this._autoCompleterManager.getCurrentlyTypingWord();
+                    // const inputStr = this._autoCompleterManager.getInputStr();
                     //let startText = inputStr.substring(0, this.AutoCompleterManager.getSelectionStart() - currentlyTypingWord.length);
                     //let endText = inputStr.substring(this.AutoCompleterManager.getSelectionStart(), inputStr.length);
-                    console.log(selectedKeyword);
+                    // console.log(selectedKeyword);
                     if (selectedKeyword !== '') {
-                        var currentLatextValue = _this._autoCompleterManager.getValueFromInputText();
-                        // this._autoCompleterManager.setValueToInputText(currentLatextValue.slice(0, currentLatextValue.length - currentlyTypingWord.length));
-                        _this._autoCompleterManager.deleteLeftWord(_this._autoCompleterManager.getCurrentlyTypingWord().length);
-                        _this._autoCompleterManager.addContent(selectedKeyword);
+                        _this.writeKeyword(selectedKeyword);
                         _this._autoCompleterManager.hide();
                         _this._autoCompleterManager.setVisibility(false);
                         e.preventDefault();
@@ -1214,6 +1223,15 @@ var ClickAndKeyListener = /** @class */ (function () {
                 }
             }
         });
+    };
+    ClickAndKeyListener.prototype.writeKeyword = function (pSelectedKeyword) {
+        this._autoCompleterManager.deleteLeftWord(this._autoCompleterManager.getCurrentlyTypingWord().length);
+        if (pSelectedKeyword[0] === '\\') {
+            this._autoCompleterManager.addCmd(pSelectedKeyword);
+        }
+        else {
+            this._autoCompleterManager.addContent(pSelectedKeyword);
+        }
     };
     /*
     * ClickAndKeyListener.setKeyupEventsToAutoCompleterManager():

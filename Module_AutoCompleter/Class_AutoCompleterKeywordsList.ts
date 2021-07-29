@@ -235,4 +235,8 @@ const g_keywordsList: KeywordObject[] = [
         keyword: "\\downarrow",
         tags: "down arrow",
     },
+    { 
+        keyword: "Function",
+        tags: "function",
+    },
 ];
