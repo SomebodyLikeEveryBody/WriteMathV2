@@ -239,4 +239,8 @@ const g_keywordsList: KeywordObject[] = [
         keyword: "Function",
         tags: "function",
     },
+    { 
+        keyword: "Equation",
+        tags: "function",
+    },
 ];

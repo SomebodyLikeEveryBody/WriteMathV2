@@ -171,6 +171,7 @@ class UndoRedoManager {
 
     protected setKeyDownEvents(): void {
         this._mathLineInput.keyDown((e) => {
+            // console.log(e.which);
             this.checkIfSpecialKeysAreDownAndSetStates(e.which);
 
             //set CTRL shortcuts
@@ -396,8 +397,12 @@ class UndoRedoManager {
 
             //alt + G
             case KeyCodes.G_KEY:
-                // this._mathLineInput.appendCmdAtCursorPosition('\\Given');
                 this._mathLineInput.appendValueAtCursorPosition('\\Given ');
+                break;
+
+            //alt + 9
+            case KeyCodes.NINE_KEY:
+                this._mathLineInput.appendCmdAtCursorPosition('\\infinity');
                 break;
         }
     }

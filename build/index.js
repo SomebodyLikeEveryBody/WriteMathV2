@@ -21,6 +21,7 @@ var KeyCodes;
     KeyCodes[KeyCodes["DELETE_KEY"] = 46] = "DELETE_KEY";
     KeyCodes[KeyCodes["N0_KEY"] = 48] = "N0_KEY";
     KeyCodes[KeyCodes["EIGHT_KEY"] = 56] = "EIGHT_KEY";
+    KeyCodes[KeyCodes["NINE_KEY"] = 57] = "NINE_KEY";
     KeyCodes[KeyCodes["SEMICOLON_KEY"] = 59] = "SEMICOLON_KEY";
     KeyCodes[KeyCodes["EQUAL_KEY"] = 61] = "EQUAL_KEY";
     KeyCodes[KeyCodes["A_KEY"] = 65] = "A_KEY";
@@ -292,6 +293,10 @@ var g_keywordsList = [
         keyword: "Function",
         tags: "function",
     },
+    {
+        keyword: "Equation",
+        tags: "function",
+    },
 ];
 var MathLineInput = /** @class */ (function () {
     function MathLineInput() {
@@ -301,8 +306,8 @@ var MathLineInput = /** @class */ (function () {
         this._previousMathLineInput = null;
         this._isDeletable = true;
         this._mathField = MathQuill.getInterface(2).MathField(this._jQEl[0], {
-            autoCommands: 'implies infinity lor land neg union notin forall nabla Angstrom alpha beta gamma Gamma delta Delta zeta eta theta Theta iota kappa lambda mu nu pi rho sigma tau phi chi psi Psi omega Omega',
-            autoOperatorNames: 'ln log det min max mod lcm gcd lim sin cos tan sec Function isEven isOdd divides Given',
+            autoCommands: 'implies infinity lor land neg union notin forall nabla Angstrom alpha beta gamma Gamma delta Delta zeta eta theta Theta iota kappa lambda mu nu pi rho sigma tau phi Phi chi psi Psi omega Omega',
+            autoOperatorNames: 'ln log det min max mod lcm gcd lim sin cos tan sec Function isEven isOdd divides Given Equation',
             handlers: {
                 edit: function () {
                 },
@@ -653,6 +658,7 @@ var UndoRedoManager = /** @class */ (function () {
     UndoRedoManager.prototype.setKeyDownEvents = function () {
         var _this = this;
         this._mathLineInput.keyDown(function (e) {
+            // console.log(e.which);
             _this.checkIfSpecialKeysAreDownAndSetStates(e.which);
             //set CTRL shortcuts
             if (_this._ctrlIsDown) {
@@ -834,8 +840,11 @@ var UndoRedoManager = /** @class */ (function () {
                 break;
             //alt + G
             case KeyCodes.G_KEY:
-                // this._mathLineInput.appendCmdAtCursorPosition('\\Given');
                 this._mathLineInput.appendValueAtCursorPosition('\\Given ');
+                break;
+            //alt + 9
+            case KeyCodes.NINE_KEY:
+                this._mathLineInput.appendCmdAtCursorPosition('\\infinity');
                 break;
         }
     };

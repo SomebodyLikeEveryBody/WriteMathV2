@@ -17,8 +17,8 @@ class MathLineInput {
         this._isDeletable = true;
 
         this._mathField = MathQuill.getInterface(2).MathField(this._jQEl[0], {
-            autoCommands: 'implies infinity lor land neg union notin forall nabla Angstrom alpha beta gamma Gamma delta Delta zeta eta theta Theta iota kappa lambda mu nu pi rho sigma tau phi chi psi Psi omega Omega', //add ctrl + E for varepsilon and ctrl + u for upsilon, see for Upsilon 
-            autoOperatorNames: 'ln log det min max mod lcm gcd lim sin cos tan sec Function isEven isOdd divides Given',
+            autoCommands: 'implies infinity lor land neg union notin forall nabla Angstrom alpha beta gamma Gamma delta Delta zeta eta theta Theta iota kappa lambda mu nu pi rho sigma tau phi Phi chi psi Psi omega Omega', //add ctrl + E for varepsilon and ctrl + u for upsilon, see for Upsilon 
+            autoOperatorNames: 'ln log det min max mod lcm gcd lim sin cos tan sec Function isEven isOdd divides Given Equation',
             handlers: {
                 edit: () => {
                 },
