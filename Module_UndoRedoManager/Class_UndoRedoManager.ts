@@ -404,6 +404,16 @@ class UndoRedoManager {
             case KeyCodes.NINE_KEY:
                 this._mathLineInput.appendCmdAtCursorPosition('\\infinity');
                 break;
+
+            //alt + 7
+            case KeyCodes.SEVEN_KEY:
+                this._mathLineInput.appendValueAtCursorPosition('d/d_');
+                break;
+
+            //alt + 6
+            case KeyCodes.SIX_KEY:
+                this._mathLineInput.appendValueAtCursorPosition('\\partial/\\partial_');
+                break;
         }
     }
 }
