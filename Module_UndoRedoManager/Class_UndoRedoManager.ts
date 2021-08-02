@@ -1,16 +1,12 @@
 const unaffectingKeys: KeyCodes[] = [
-    KeyCodes.TAB_KEY,
     KeyCodes.ENTER_KEY,
     KeyCodes.SHIFT_KEY,
     KeyCodes.CTRL_KEY,
     KeyCodes.ALT_KEY,
     KeyCodes.CAPSLOCK_KEY,
     KeyCodes.ESCAPE_KEY,
-    KeyCodes.LEFTARROW_KEY,
     KeyCodes.PAGEUP_KEY,
     KeyCodes.PAGEDOWN_KEY,
-    KeyCodes.END_KEY,
-    KeyCodes.HOME_KEY,
     KeyCodes.ALTGR_KEY,
 ];
 

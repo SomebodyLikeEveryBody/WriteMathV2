@@ -311,6 +311,7 @@ class MathLineInput {
 
     public setCursorConfiguration(pCursorConfiguration: any): void {
         this._mathField.__controller.cursor.clearSelection();
+        this._mathField.__controller.cursor.startSelection();
         
         if (pCursorConfiguration.anticursor) {
             this.setLocationOf(pCursorConfiguration.anticursor);
