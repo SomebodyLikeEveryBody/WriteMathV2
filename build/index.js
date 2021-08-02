@@ -517,6 +517,76 @@ var MathLineInput = /** @class */ (function () {
             }
         });
     };
+    MathLineInput.prototype.getLocationOf = function (pCursor) {
+        var L = -1;
+        var R = 1;
+        var retCursorLocation = [];
+        var mathfieldTreeElement;
+        if (pCursor[L]) {
+            retCursorLocation.push('insRightOf');
+            mathfieldTreeElement = pCursor[L];
+        }
+        else if (pCursor[R]) {
+            retCursorLocation.push('insLeftOf');
+            mathfieldTreeElement = pCursor[R];
+        }
+        else {
+            retCursorLocation.push('insAtLeftEnd');
+            mathfieldTreeElement = pCursor.parent;
+        }
+        while (mathfieldTreeElement != this._mathField.__controller.root) {
+            if (mathfieldTreeElement[L]) {
+                retCursorLocation.push('L');
+                mathfieldTreeElement = mathfieldTreeElement[L];
+            }
+            else {
+                retCursorLocation.push('endsL');
+                mathfieldTreeElement = mathfieldTreeElement.parent;
+            }
+        }
+        return retCursorLocation.reverse();
+    };
+    MathLineInput.prototype.getCursorConfiguration = function () {
+        if (this._mathField.__controller.cursor.anticursor) {
+            return {
+                cursor: this.getLocationOf(this._mathField.__controller.cursor),
+                anticursor: this.getLocationOf(this._mathField.__controller.cursor.anticursor)
+            };
+        }
+        else {
+            return { cursor: this.getLocationOf(this._mathField.__controller.cursor) };
+        }
+    };
+    MathLineInput.prototype.setLocationOf = function (pCursor) {
+        var L = -1;
+        var R = 1;
+        var mathfieldTreeElement = this._mathField.__controller.root;
+        for (var i = 0; i < pCursor.length; i++) {
+            switch (pCursor[i]) {
+                case 'L':
+                    mathfieldTreeElement = mathfieldTreeElement[R];
+                    break;
+                case 'endsL':
+                    mathfieldTreeElement = mathfieldTreeElement.ends[L];
+                    break;
+                default:
+                    this._mathField.__controller.cursor[pCursor[i]](mathfieldTreeElement);
+            }
+        }
+    };
+    MathLineInput.prototype.setCursorConfiguration = function (pCursorConfiguration) {
+        this._mathField.__controller.cursor.clearSelection();
+        if (pCursorConfiguration.anticursor) {
+            this.setLocationOf(pCursorConfiguration.anticursor);
+            this._mathField.__controller.cursor.startSelection();
+        }
+        if (pCursorConfiguration.cursor) {
+            this.setLocationOf(pCursorConfiguration.cursor);
+            if (pCursorConfiguration.anticursor) {
+                this._mathField.__controller.cursor.select();
+            }
+        }
+    };
     return MathLineInput;
 }());
 var unaffectingKeys = [
