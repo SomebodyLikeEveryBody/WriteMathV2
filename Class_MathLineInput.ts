@@ -326,4 +326,8 @@ class MathLineInput {
             }
         }
     }
+
+    public showCursor(): void {
+        this._mathField.__controller.cursor.show()
+    }
 }

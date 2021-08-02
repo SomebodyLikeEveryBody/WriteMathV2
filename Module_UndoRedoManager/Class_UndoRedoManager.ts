@@ -137,6 +137,7 @@ class UndoRedoManager {
             this._currentState = this._currentState.valueOf() - 1;
             this._mathLineInput.setValue(this.getValueHistoryAtState(this._currentState));
             this._mathLineInput.setCursorConfiguration(this.getCursorConfigurationHistoryAtState(this._currentState));
+            this._mathLineInput.showCursor();
         }  else {
             //console.log('do nothing');
         }
@@ -147,6 +148,7 @@ class UndoRedoManager {
             this._currentState = this._currentState.valueOf() + 1;
             this._mathLineInput.setValue(this.getValueHistoryAtState(this._currentState));
             this._mathLineInput.setCursorConfiguration(this.getCursorConfigurationHistoryAtState(this._currentState));
+            this._mathLineInput.showCursor();
         } else {
             //console.log('do nothing');
         }

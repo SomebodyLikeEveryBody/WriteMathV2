@@ -588,6 +588,9 @@ var MathLineInput = /** @class */ (function () {
             }
         }
     };
+    MathLineInput.prototype.showCursor = function () {
+        this._mathField.__controller.cursor.show();
+    };
     return MathLineInput;
 }());
 var unaffectingKeys = [
@@ -697,6 +700,7 @@ var UndoRedoManager = /** @class */ (function () {
             this._currentState = this._currentState.valueOf() - 1;
             this._mathLineInput.setValue(this.getValueHistoryAtState(this._currentState));
             this._mathLineInput.setCursorConfiguration(this.getCursorConfigurationHistoryAtState(this._currentState));
+            this._mathLineInput.showCursor();
         }
         else {
             //console.log('do nothing');
