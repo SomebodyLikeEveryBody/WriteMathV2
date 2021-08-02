@@ -602,22 +602,23 @@ var unaffectingKeys = [
     KeyCodes.PAGEDOWN_KEY,
     KeyCodes.END_KEY,
     KeyCodes.HOME_KEY,
-    KeyCodes.LEFTARROW_KEY,
-    KeyCodes.UPARROW_KEY,
-    KeyCodes.RIGHTARROW_KEY,
-    KeyCodes.DOWNARROW_KEY,
     KeyCodes.ALTGR_KEY,
 ];
 var UndoRedoManager = /** @class */ (function () {
     function UndoRedoManager(pMathLineInput) {
         this._mathLineInput = pMathLineInput;
-        this._typedHistory = [this._mathLineInput.value()];
         this._ctrlIsDown = false;
         this._altIsDown = false;
         this._YIsDown = false;
         this._ZIsDown = false;
         this._currentState = 0;
         this._buffSize = 50;
+        this._typedHistory = [
+            {
+                value: this._mathLineInput.value(),
+                cursorConfiguration: this._mathLineInput.getCursorConfiguration()
+            }
+        ];
         this.setEvents();
     }
     UndoRedoManager.prototype.setCtrlToDown = function () {
@@ -681,17 +682,24 @@ var UndoRedoManager = /** @class */ (function () {
         if (!(this.isCurrentStateIsLastHistoryState())) {
             this._typedHistory = this._typedHistory.slice(0, (this._currentState.valueOf() + 1));
         }
-        this._typedHistory.push(this._mathLineInput.value());
+        this._typedHistory.push({
+            value: this._mathLineInput.value(),
+            cursorConfiguration: this._mathLineInput.getCursorConfiguration()
+        });
         this.rearrangeTypedHistoryArray();
         this._currentState = this._currentState.valueOf() + 1;
     };
     UndoRedoManager.prototype.getValueHistoryAtState = function (pState) {
-        return this._typedHistory[pState.valueOf()];
+        return this._typedHistory[pState.valueOf()].value;
+    };
+    UndoRedoManager.prototype.getCursorConfigurationHistoryAtState = function (pState) {
+        return this._typedHistory[pState.valueOf()].cursorConfiguration;
     };
     UndoRedoManager.prototype.undo = function () {
         if (!this.isCurrentStateIsFirstHistoryState()) {
             this._currentState = this._currentState.valueOf() - 1;
             this._mathLineInput.setValue(this.getValueHistoryAtState(this._currentState));
+            this._mathLineInput.setCursorConfiguration(this.getCursorConfigurationHistoryAtState(this._currentState));
         }
         else {
             //console.log('do nothing');
@@ -701,6 +709,7 @@ var UndoRedoManager = /** @class */ (function () {
         if (!this.isCurrentStateIsLastHistoryState()) {
             this._currentState = this._currentState.valueOf() + 1;
             this._mathLineInput.setValue(this.getValueHistoryAtState(this._currentState));
+            this._mathLineInput.setCursorConfiguration(this.getCursorConfigurationHistoryAtState(this._currentState));
         }
         else {
             //console.log('do nothing');
