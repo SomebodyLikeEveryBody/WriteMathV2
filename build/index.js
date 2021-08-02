@@ -297,7 +297,7 @@ var g_keywordsList = [
     },
     {
         keyword: "Equation",
-        tags: "function",
+        tags: "equation",
     },
 ];
 var MathLineInput = /** @class */ (function () {
