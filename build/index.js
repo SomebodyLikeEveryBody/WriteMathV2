@@ -410,14 +410,14 @@ var MathLineInput = /** @class */ (function () {
     MathLineInput.prototype.appendTo = function (pElement) {
         this._jQEl.appendTo(pElement);
     };
+    MathLineInput.prototype.insertAfter = function (pElement) {
+        this._jQEl.insertAfter(pElement);
+    };
     MathLineInput.prototype.hasPreviousMathLineInput = function () {
         return this._previousMathLineInput !== null;
     };
     MathLineInput.prototype.hasNextMathLineInput = function () {
         return this._nextMathLineInput !== null;
-    };
-    MathLineInput.prototype.insertAfter = function (pElement) {
-        this._jQEl.insertAfter(pElement);
     };
     MathLineInput.prototype.setCtrlToDown = function () {
         this._undoRedoManager.setCtrlToDown();
@@ -570,7 +570,7 @@ var MathLineInput = /** @class */ (function () {
                     mathfieldTreeElement = mathfieldTreeElement.ends[L];
                     break;
                 default:
-                    this._mathField.__controller.cursor[pCursor[i]](mathfieldTreeElement);
+                    this._mathField.__controller.cursor[pCursor[i].valueOf()](mathfieldTreeElement);
             }
         }
     };
@@ -711,6 +711,7 @@ var UndoRedoManager = /** @class */ (function () {
             this._currentState = this._currentState.valueOf() + 1;
             this._mathLineInput.setValue(this.getValueHistoryAtState(this._currentState));
             this._mathLineInput.setCursorConfiguration(this.getCursorConfigurationHistoryAtState(this._currentState));
+            this._mathLineInput.showCursor();
         }
         else {
             //console.log('do nothing');
@@ -1419,9 +1420,9 @@ var AutoCompleter = /** @class */ (function () {
     };
     return AutoCompleter;
 }());
-//function main(): void {
-var firstMathLineInput = new MathLineInput();
-firstMathLineInput.appendTo($('#content'));
-firstMathLineInput.focus();
-// }
-// main();
+function main() {
+    var firstMathLineInput = new MathLineInput();
+    firstMathLineInput.appendTo($('#content'));
+    firstMathLineInput.focus();
+}
+main();

@@ -7,6 +7,8 @@ tsc -t ES5 --outFile ./build/index.js \
     ./Interface_KeywordObject.ts \
     ./Interface_MathFieldTreeElement.ts \
     ./Interface_HistoryStatement.ts \
+    ./Interface_CursorConfiguration.ts \
+    ./Interface_EventObject.ts \
     ./Module_AutoCompleter/Class_AutoCompleterKeywordsList.ts \
     ./Class_MathLineInput.ts \
     ./Module_UndoRedoManager/Class_UndoRedoManager.ts \

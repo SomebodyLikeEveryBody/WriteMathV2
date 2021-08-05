@@ -1,4 +1,4 @@
 interface HistoryStatement {
     value: String,
-    cursorConfiguration: String[]
+    cursorConfiguration: CursorConfiguration
 }

@@ -6,9 +6,9 @@ class MathLineInput {
     protected _nextMathLineInput: MathLineInput;
     protected _previousMathLineInput: MathLineInput;
     protected _isDeletable: Boolean;
-    protected _mathField: any;
     protected _autoCompleter: AutoCompleter;
     protected _undoRedoManager: UndoRedoManager;
+    protected _mathField: any;
 
     public constructor() {
         this._jQEl = $('<p class="mathLineInput"></p>');
@@ -123,16 +123,16 @@ class MathLineInput {
         this._jQEl.appendTo(pElement);
     }
 
+    public insertAfter(pElement: JQueryElement): void {
+        this._jQEl.insertAfter(pElement);
+    }
+
     public hasPreviousMathLineInput(): Boolean {
         return this._previousMathLineInput !== null;
     }
 
     public hasNextMathLineInput(): Boolean {
         return this._nextMathLineInput !== null
-    }
-
-    public insertAfter(pElement: JQueryElement): void {
-        this._jQEl.insertAfter(pElement);
     }
 
     public setCtrlToDown(): void {
@@ -246,7 +246,7 @@ class MathLineInput {
         });
     }
 
-    protected getLocationOf(pCursor: any) {
+    protected getLocationOf(pCursor: MathFieldTreeElement): String[] {
         const L = -1;
         const R = 1;
         const retCursorLocation: String[] = [];
@@ -276,7 +276,7 @@ class MathLineInput {
         return retCursorLocation.reverse();
     }
 
-    public getCursorConfiguration(): any {
+    public getCursorConfiguration(): CursorConfiguration {
         if (this._mathField.__controller.cursor.anticursor) {
             return { 
                 cursor: this.getLocationOf(this._mathField.__controller.cursor),
@@ -287,7 +287,7 @@ class MathLineInput {
         }
     }
 
-    protected setLocationOf(pCursor: any) {
+    protected setLocationOf(pCursor: (String|Number)[]) {
         const L = -1;
         const R = 1;
         
@@ -304,12 +304,12 @@ class MathLineInput {
                     break;
 
                 default:
-                    this._mathField.__controller.cursor[pCursor[i]](mathfieldTreeElement);
+                    this._mathField.__controller.cursor[pCursor[i].valueOf()](mathfieldTreeElement);
             }
         }
     }
 
-    public setCursorConfiguration(pCursorConfiguration: any): void {
+    public setCursorConfiguration(pCursorConfiguration: CursorConfiguration): void {
         this._mathField.__controller.cursor.clearSelection();
         this._mathField.__controller.cursor.startSelection();
         

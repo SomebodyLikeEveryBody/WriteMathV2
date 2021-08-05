@@ -128,7 +128,7 @@ class UndoRedoManager {
         return this._typedHistory[pState.valueOf()].value;
     }
 
-    protected getCursorConfigurationHistoryAtState(pState: Number): String[] {
+    protected getCursorConfigurationHistoryAtState(pState: Number): CursorConfiguration {
         return this._typedHistory[pState.valueOf()].cursorConfiguration;
     }
 
@@ -214,7 +214,7 @@ class UndoRedoManager {
         this._ZIsDown = false;
     }
 
-    protected bindCtrlShortcuts(pEventObj: any): void {
+    protected bindCtrlShortcuts(pEventObj: EventObject): void {
         switch (pEventObj.which) {
 
             //ctrl + [ ==> lfloor
@@ -246,7 +246,7 @@ class UndoRedoManager {
         }
     }
 
-    protected bindAltShortcuts(pEventObj: any): void {
+    protected bindAltShortcuts(pEventObj: EventObject): void {
         switch (pEventObj.which) {
 
             //alt + D
