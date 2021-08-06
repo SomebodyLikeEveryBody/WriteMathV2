@@ -392,12 +392,14 @@ var MathLineInput = /** @class */ (function () {
      * * * * * */
     MathLineInput.prototype.focus = function () {
         this._mathField.focus();
+        return this;
     };
     MathLineInput.prototype.value = function () {
         return this._mathField.latex();
     };
     MathLineInput.prototype.setValue = function (pValue) {
         this._mathField.latex(pValue);
+        return this;
     };
     MathLineInput.prototype.appendValueAtCursorPosition = function (pValue) {
         this._mathField.typedText(pValue);
@@ -422,6 +424,8 @@ var MathLineInput = /** @class */ (function () {
     };
     MathLineInput.prototype.setCtrlToDown = function () {
         this._undoRedoManager.setCtrlToDown();
+        this._shortcutsManager.setCtrlToDown();
+        return this;
     };
     MathLineInput.prototype.createNewMathLineInputAndAppendAfter = function (pMathLineInput) {
         var newMathLineInput = new MathLineInput();
@@ -478,6 +482,9 @@ var MathLineInput = /** @class */ (function () {
         this.setDeleteIfBackSpaceInEmptyFieldIsTypedEvent();
         this._jQEl.focusout(function () {
             _this._autoCompleter.hide();
+        });
+        this._jQEl.blur(function () {
+            console.log('blur');
         });
     };
     MathLineInput.prototype.setDeleteIfBackSpaceInEmptyFieldIsTypedEvent = function () {
@@ -593,10 +600,10 @@ var MathLineInput = /** @class */ (function () {
         this._mathField.__controller.cursor.show();
     };
     MathLineInput.prototype.duplicateMathLine = function () {
-        var newMathlineInput = this.createNewMathLineInputAndAppendAfter(this);
-        newMathlineInput.setValue(this.value());
-        newMathlineInput.focus();
-        newMathlineInput.setCtrlToDown();
+        var newMathlineInput = this.createNewMathLineInputAndAppendAfter(this)
+            .setValue(this.value())
+            .focus()
+            .setCtrlToDown();
         this._undoRedoManager.setKeysToDown();
     };
     return MathLineInput;
@@ -620,7 +627,7 @@ var UndoRedoManager = /** @class */ (function () {
         this._YIsDown = false;
         this._ZIsDown = false;
         this._currentState = 0;
-        this._buffSize = 50;
+        this._buffSize = 100;
         this._typedHistory = [
             {
                 value: this._mathLineInput.value(),

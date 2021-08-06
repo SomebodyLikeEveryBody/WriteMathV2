@@ -97,16 +97,18 @@ class MathLineInput {
     /* * * * * * 
      * Methods * 
      * * * * * */
-    public focus(): void {
+    public focus(): MathLineInput {
         this._mathField.focus();
+        return this;
     }
 
     public value(): String {
         return this._mathField.latex();
     }
 
-    public setValue(pValue: String): void {
+    public setValue(pValue: String): MathLineInput {
         this._mathField.latex(pValue);
+        return this;
     }
 
     public appendValueAtCursorPosition(pValue: String): void {
@@ -137,8 +139,10 @@ class MathLineInput {
         return this._nextMathLineInput !== null
     }
 
-    public setCtrlToDown(): void {
+    public setCtrlToDown(): MathLineInput {
         this._undoRedoManager.setCtrlToDown();
+        this._shortcutsManager.setCtrlToDown();
+        return this;
     }
 
     public createNewMathLineInputAndAppendAfter(pMathLineInput: MathLineInput): MathLineInput {
@@ -210,6 +214,8 @@ class MathLineInput {
 
         this._jQEl.focusout(() => {
             this._autoCompleter.hide();
+            //set specialKeysToUp for undoredo and shortcut
+        
         });
     }
 
@@ -334,11 +340,11 @@ class MathLineInput {
     }
 
     public duplicateMathLine(): void {
-        const newMathlineInput = this.createNewMathLineInputAndAppendAfter(this);
-        
-        newMathlineInput.setValue(this.value());
-        newMathlineInput.focus();
-        newMathlineInput.setCtrlToDown();
+        const newMathlineInput = this.createNewMathLineInputAndAppendAfter(this)
+            .setValue(this.value())
+            .focus()
+            .setCtrlToDown();
+
         this._undoRedoManager.setKeysToDown();
     }
 }

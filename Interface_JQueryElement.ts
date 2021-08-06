@@ -19,4 +19,5 @@ interface JQueryElement {
     keydown(pFunction: Function): JQueryElement;
     keyup(pFunction: Function): JQueryElement;
     focusout(pFunction: Function): JQueryElement;
+    blur(pFuction: Function): JQueryElement;
 }
