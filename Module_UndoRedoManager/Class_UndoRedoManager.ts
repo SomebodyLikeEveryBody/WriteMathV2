@@ -27,7 +27,7 @@ class UndoRedoManager {
         this._YIsDown = false;
         this._ZIsDown = false;
         this._currentState = 0;
-        this._buffSize = 50;
+        this._buffSize = 100;
         this._typedHistory = [
             { 
                 value: this._mathLineInput.value(),
