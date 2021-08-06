@@ -12,6 +12,7 @@ tsc -t ES5 --outFile ./build/index.js \
     ./Module_AutoCompleter/Class_AutoCompleterKeywordsList.ts \
     ./Class_MathLineInput.ts \
     ./Module_UndoRedoManager/Class_UndoRedoManager.ts \
+    ./Module_ShortcutsManager/Class_ShortcutsManager.ts \
     ./Module_AutoCompleter/Class_AutoCompleter.ts \
     ./main.ts \
 

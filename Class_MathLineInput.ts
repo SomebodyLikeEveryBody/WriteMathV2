@@ -8,6 +8,7 @@ class MathLineInput {
     protected _isDeletable: Boolean;
     protected _autoCompleter: AutoCompleter;
     protected _undoRedoManager: UndoRedoManager;
+    protected _shortcutsManager: ShortcutsManager;
     protected _mathField: any;
 
     public constructor() {
@@ -52,6 +53,7 @@ class MathLineInput {
 
         this._autoCompleter = new AutoCompleter(this, g_keywordsList);
         this._undoRedoManager = new UndoRedoManager(this);
+        this._shortcutsManager = new ShortcutsManager(this);
         
 
         this.setEvents();
@@ -329,5 +331,14 @@ class MathLineInput {
 
     public showCursor(): void {
         this._mathField.__controller.cursor.show()
+    }
+
+    public duplicateMathLine(): void {
+        const newMathlineInput = this.createNewMathLineInputAndAppendAfter(this);
+        
+        newMathlineInput.setValue(this.value());
+        newMathlineInput.focus();
+        newMathlineInput.setCtrlToDown();
+        this._undoRedoManager.setKeysToDown();
     }
 }
