@@ -482,9 +482,8 @@ var MathLineInput = /** @class */ (function () {
         this.setDeleteIfBackSpaceInEmptyFieldIsTypedEvent();
         this._jQEl.focusout(function () {
             _this._autoCompleter.hide();
-        });
-        this._jQEl.blur(function () {
-            console.log('blur');
+            _this._undoRedoManager.setSpecialKeysToUp();
+            _this._shortcutsManager.setSpecialKeysToUp();
         });
     };
     MathLineInput.prototype.setDeleteIfBackSpaceInEmptyFieldIsTypedEvent = function () {
@@ -604,7 +603,7 @@ var MathLineInput = /** @class */ (function () {
             .setValue(this.value())
             .focus()
             .setCtrlToDown();
-        this._undoRedoManager.setKeysToDown();
+        this._undoRedoManager.setSpecialKeysToUp();
     };
     return MathLineInput;
 }());
@@ -737,7 +736,7 @@ var UndoRedoManager = /** @class */ (function () {
         this.setKeyUpEvents();
         this.setKeyDownEvents();
         window.addEventListener('blur', function () {
-            _this.setKeysToDown();
+            _this.setSpecialKeysToUp();
         });
     };
     UndoRedoManager.prototype.setKeyUpEvents = function () {
@@ -770,7 +769,7 @@ var UndoRedoManager = /** @class */ (function () {
             }
         });
     };
-    UndoRedoManager.prototype.setKeysToDown = function () {
+    UndoRedoManager.prototype.setSpecialKeysToUp = function () {
         this._ctrlIsDown = false;
         this._altIsDown = false;
         this._YIsDown = false;
@@ -813,7 +812,7 @@ var ShortcutsManager = /** @class */ (function () {
         this.setKeyUpEvents();
         this.setKeyDownEvents();
         window.addEventListener('blur', function () {
-            _this.setKeysToDown();
+            _this.setSpecialKeysToUp();
         });
     };
     ShortcutsManager.prototype.setKeyUpEvents = function () {
@@ -839,7 +838,7 @@ var ShortcutsManager = /** @class */ (function () {
             }
         });
     };
-    ShortcutsManager.prototype.setKeysToDown = function () {
+    ShortcutsManager.prototype.setSpecialKeysToUp = function () {
         this._ctrlIsDown = false;
         this._altIsDown = false;
     };

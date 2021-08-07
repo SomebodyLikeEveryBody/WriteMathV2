@@ -214,8 +214,8 @@ class MathLineInput {
 
         this._jQEl.focusout(() => {
             this._autoCompleter.hide();
-            //set specialKeysToUp for undoredo and shortcut
-        
+            this._undoRedoManager.setSpecialKeysToUp();
+            this._shortcutsManager.setSpecialKeysToUp();
         });
     }
 
@@ -345,6 +345,6 @@ class MathLineInput {
             .focus()
             .setCtrlToDown();
 
-        this._undoRedoManager.setKeysToDown();
+        this._undoRedoManager.setSpecialKeysToUp();
     }
 }

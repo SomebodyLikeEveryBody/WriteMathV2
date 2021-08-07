@@ -44,7 +44,7 @@ class ShortcutsManager {
         this.setKeyDownEvents();
 
         window.addEventListener('blur', () => {
-            this.setKeysToDown();
+            this.setSpecialKeysToUp();
         });
     }
 
@@ -74,7 +74,7 @@ class ShortcutsManager {
         });
     }
 
-    protected setKeysToDown(): void {
+    public setSpecialKeysToUp(): void {
         this._ctrlIsDown = false;
         this._altIsDown = false;
     }

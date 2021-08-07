@@ -159,7 +159,7 @@ class UndoRedoManager {
         this.setKeyDownEvents();
 
         window.addEventListener('blur', () => {
-            this.setKeysToDown();
+            this.setSpecialKeysToUp();
         });
     }
 
@@ -197,7 +197,7 @@ class UndoRedoManager {
         });
     }
 
-    public setKeysToDown(): void {
+    public setSpecialKeysToUp(): void {
         this._ctrlIsDown = false;
         this._altIsDown = false;
         this._YIsDown = false;
