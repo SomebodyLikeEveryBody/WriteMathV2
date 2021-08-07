@@ -113,6 +113,15 @@ class ShortcutsManager {
                 pEventObj.preventDefault();
                 this._mathLineInput.appendValueAtCursorPosition('\\print(');
                 break;
+
+            //ctrl + down arrow
+            case KeyCodes.DOWNARROW_KEY:
+                pEventObj.preventDefault();
+                console.log('faire le truc');
+                this._mathLineInput.duplicateMathLine();
+                this._mathLineInput.setValue('');
+                this._mathLineInput.focus();
+                break;
         }
     }
 
@@ -298,6 +307,11 @@ class ShortcutsManager {
             //alt + 1
             case KeyCodes.N1_KEY:
                 this._mathLineInput.appendCmdAtCursorPosition('\\neg');
+                break;
+
+            //alt + X
+            case KeyCodes.X_KEY:
+                this._mathLineInput.appendCmdAtCursorPosition('\\times');
                 break;
         }
     }

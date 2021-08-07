@@ -44,6 +44,7 @@ enum KeyCodes {
     U_KEY = 85,
     V_KEY = 86,
     W_KEY = 87,
+    X_KEY = 88,
     Y_KEY = 89,
     Z_KEY = 90,
     MINUS_KEY = 173,

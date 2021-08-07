@@ -45,6 +45,7 @@ var KeyCodes;
     KeyCodes[KeyCodes["U_KEY"] = 85] = "U_KEY";
     KeyCodes[KeyCodes["V_KEY"] = 86] = "V_KEY";
     KeyCodes[KeyCodes["W_KEY"] = 87] = "W_KEY";
+    KeyCodes[KeyCodes["X_KEY"] = 88] = "X_KEY";
     KeyCodes[KeyCodes["Y_KEY"] = 89] = "Y_KEY";
     KeyCodes[KeyCodes["Z_KEY"] = 90] = "Z_KEY";
     KeyCodes[KeyCodes["MINUS_KEY"] = 173] = "MINUS_KEY";
@@ -898,6 +899,14 @@ var ShortcutsManager = /** @class */ (function () {
                 pEventObj.preventDefault();
                 this._mathLineInput.appendValueAtCursorPosition('\\print(');
                 break;
+            //ctrl + down arrow
+            case KeyCodes.DOWNARROW_KEY:
+                pEventObj.preventDefault();
+                console.log('faire le truc');
+                this._mathLineInput.duplicateMathLine();
+                this._mathLineInput.setValue('');
+                this._mathLineInput.focus();
+                break;
         }
     };
     ShortcutsManager.prototype.bindAltShortcuts = function (pEventObj) {
@@ -1046,6 +1055,10 @@ var ShortcutsManager = /** @class */ (function () {
             //alt + 1
             case KeyCodes.N1_KEY:
                 this._mathLineInput.appendCmdAtCursorPosition('\\neg');
+                break;
+            //alt + X
+            case KeyCodes.X_KEY:
+                this._mathLineInput.appendCmdAtCursorPosition('\\times');
                 break;
         }
     };
