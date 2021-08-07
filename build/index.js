@@ -323,7 +323,7 @@ var MathLineInput = /** @class */ (function () {
         this._isDeletable = true;
         this._mathField = MathQuill.getInterface(2).MathField(this._jQEl[0], {
             autoCommands: 'implies infinity lor land neg union notin forall nabla Angstrom alpha beta gamma Gamma delta Delta zeta eta theta Theta iota kappa lambda mu nu pi rho sigma tau phi Phi chi psi Psi omega Omega',
-            autoOperatorNames: 'ln log det min max mod lcm gcd lim sin cos tan sec neq Function isEven isOdd divides Given Equation diff Vector Matrix Bool',
+            autoOperatorNames: 'ln log det min max mod lcm gcd lim sin cos tan sec neq Function isEven isOdd divides Given Equation diff Vector Matrix Bool Graph',
             handlers: {
                 edit: function () {
                 },
@@ -894,10 +894,19 @@ var ShortcutsManager = /** @class */ (function () {
             case KeyCodes.E_KEY:
                 this._mathLineInput.appendCmdAtCursorPosition('\\varepsilon');
                 break;
+            //ctrl + O ==> o composition de fonction
+            case KeyCodes.O_KEY:
+                pEventObj.preventDefault();
+                this._mathLineInput.appendValueAtCursorPosition(' \\circ ');
+                break;
             //ctrl + P ==> print 
             case KeyCodes.P_KEY:
                 pEventObj.preventDefault();
                 this._mathLineInput.appendValueAtCursorPosition('\\print(');
+                break;
+            //ctrl + right arrow
+            case KeyCodes.RIGHTARROW_KEY:
+                this._mathLineInput.appendValueAtCursorPosition(' \\mapsto ');
                 break;
             //ctrl + down arrow
             case KeyCodes.DOWNARROW_KEY:
@@ -906,6 +915,7 @@ var ShortcutsManager = /** @class */ (function () {
                 this._mathLineInput.duplicateMathLine();
                 this._mathLineInput.setValue('');
                 this._mathLineInput.focus();
+                this._mathLineInput.setCtrlToDown();
                 break;
         }
     };

@@ -107,6 +107,13 @@ class ShortcutsManager {
             case KeyCodes.E_KEY:
                 this._mathLineInput.appendCmdAtCursorPosition('\\varepsilon');
                 break;
+
+            
+            //ctrl + O ==> o composition de fonction
+            case KeyCodes.O_KEY:
+                pEventObj.preventDefault();
+                this._mathLineInput.appendValueAtCursorPosition(' \\circ ');
+                break;
         
             //ctrl + P ==> print 
             case KeyCodes.P_KEY:
@@ -114,13 +121,19 @@ class ShortcutsManager {
                 this._mathLineInput.appendValueAtCursorPosition('\\print(');
                 break;
 
+            //ctrl + right arrow
+            case KeyCodes.RIGHTARROW_KEY:
+                this._mathLineInput.appendValueAtCursorPosition(' \\mapsto ');
+                break;
+                
             //ctrl + down arrow
             case KeyCodes.DOWNARROW_KEY:
                 pEventObj.preventDefault();
                 console.log('faire le truc');
-                this._mathLineInput.duplicateMathLine();
+                this._mathLineInput.duplicateMathLine();    
                 this._mathLineInput.setValue('');
                 this._mathLineInput.focus();
+                this._mathLineInput.setCtrlToDown();
                 break;
         }
     }
