@@ -35,3 +35,8 @@ body
 .mathLineInput:focus-within {
     background-color: lightgrey;
 }
+
+.GivenLine
+{
+    background-color: #e8e6cf;
+}

@@ -20,4 +20,6 @@ interface JQueryElement {
     keyup(pFunction: Function): JQueryElement;
     focusout(pFunction: Function): JQueryElement;
     blur(pFuction: Function): JQueryElement;
+    addClass(pClassName: String): JQueryElement;
+    removeClass(pClassName: String): JQueryElement;
 }

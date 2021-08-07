@@ -209,6 +209,10 @@ class MathLineInput {
         this._mathField.keystroke('Backspace');
     }
 
+    protected isAGivenLine(): Boolean {
+        return this.value().indexOf('Given') !== -1;
+    }
+
     protected setEvents(): void {
         this.setDeleteIfBackSpaceInEmptyFieldIsTypedEvent();
 
@@ -216,6 +220,13 @@ class MathLineInput {
             this._autoCompleter.hide();
             this._undoRedoManager.setSpecialKeysToUp();
             this._shortcutsManager.setSpecialKeysToUp();
+            if (this.isAGivenLine()) {
+                this._jQEl.addClass('GivenLine');
+            } else {
+                this._jQEl.removeClass('GivenLine');
+            }
+
+            console.log(this.isAGivenLine());
         });
     }
 

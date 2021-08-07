@@ -477,6 +477,9 @@ var MathLineInput = /** @class */ (function () {
         }
         this._mathField.keystroke('Backspace');
     };
+    MathLineInput.prototype.isAGivenLine = function () {
+        return this.value().indexOf('Given') !== -1;
+    };
     MathLineInput.prototype.setEvents = function () {
         var _this = this;
         this.setDeleteIfBackSpaceInEmptyFieldIsTypedEvent();
@@ -484,6 +487,13 @@ var MathLineInput = /** @class */ (function () {
             _this._autoCompleter.hide();
             _this._undoRedoManager.setSpecialKeysToUp();
             _this._shortcutsManager.setSpecialKeysToUp();
+            if (_this.isAGivenLine()) {
+                _this._jQEl.addClass('GivenLine');
+            }
+            else {
+                _this._jQEl.removeClass('GivenLine');
+            }
+            console.log(_this.isAGivenLine());
         });
     };
     MathLineInput.prototype.setDeleteIfBackSpaceInEmptyFieldIsTypedEvent = function () {
