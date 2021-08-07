@@ -25,7 +25,7 @@ const g_keywordsList: KeywordObject[] = [
     },
     { 
         keyword: "\\neq",
-        tags: "equal",
+        tags: "neq",
     },
     { 
         keyword: "\\nsubseteq",
@@ -242,5 +242,17 @@ const g_keywordsList: KeywordObject[] = [
     { 
         keyword: "Equation",
         tags: "equation",
+    },
+    {
+        keyword: "Vector",
+        tags: "vect",
+    },
+    {
+        keyword: "Matrix",
+        tags: "matrix",
+    },
+    {
+        keyword: "Bool",
+        tags: "bool",
     },
 ];

@@ -20,10 +20,11 @@ var KeyCodes;
     KeyCodes[KeyCodes["DOWNARROW_KEY"] = 40] = "DOWNARROW_KEY";
     KeyCodes[KeyCodes["DELETE_KEY"] = 46] = "DELETE_KEY";
     KeyCodes[KeyCodes["N0_KEY"] = 48] = "N0_KEY";
-    KeyCodes[KeyCodes["SIX_KEY"] = 54] = "SIX_KEY";
-    KeyCodes[KeyCodes["SEVEN_KEY"] = 55] = "SEVEN_KEY";
-    KeyCodes[KeyCodes["EIGHT_KEY"] = 56] = "EIGHT_KEY";
-    KeyCodes[KeyCodes["NINE_KEY"] = 57] = "NINE_KEY";
+    KeyCodes[KeyCodes["N1_KEY"] = 49] = "N1_KEY";
+    KeyCodes[KeyCodes["N6_KEY"] = 54] = "N6_KEY";
+    KeyCodes[KeyCodes["N7_KEY"] = 55] = "N7_KEY";
+    KeyCodes[KeyCodes["N8_KEY"] = 56] = "N8_KEY";
+    KeyCodes[KeyCodes["N9_KEY"] = 57] = "N9_KEY";
     KeyCodes[KeyCodes["SEMICOLON_KEY"] = 59] = "SEMICOLON_KEY";
     KeyCodes[KeyCodes["EQUAL_KEY"] = 61] = "EQUAL_KEY";
     KeyCodes[KeyCodes["A_KEY"] = 65] = "A_KEY";
@@ -81,7 +82,7 @@ var g_keywordsList = [
     },
     {
         keyword: "\\neq",
-        tags: "equal",
+        tags: "neq",
     },
     {
         keyword: "\\nsubseteq",
@@ -299,6 +300,18 @@ var g_keywordsList = [
         keyword: "Equation",
         tags: "equation",
     },
+    {
+        keyword: "Vector",
+        tags: "vect",
+    },
+    {
+        keyword: "Matrix",
+        tags: "matrix",
+    },
+    {
+        keyword: "Bool",
+        tags: "bool",
+    },
 ];
 var MathLineInput = /** @class */ (function () {
     function MathLineInput() {
@@ -309,7 +322,7 @@ var MathLineInput = /** @class */ (function () {
         this._isDeletable = true;
         this._mathField = MathQuill.getInterface(2).MathField(this._jQEl[0], {
             autoCommands: 'implies infinity lor land neg union notin forall nabla Angstrom alpha beta gamma Gamma delta Delta zeta eta theta Theta iota kappa lambda mu nu pi rho sigma tau phi Phi chi psi Psi omega Omega',
-            autoOperatorNames: 'ln log det min max mod lcm gcd lim sin cos tan sec Function isEven isOdd divides Given Equation diff',
+            autoOperatorNames: 'ln log det min max mod lcm gcd lim sin cos tan sec neq Function isEven isOdd divides Given Equation diff Vector Matrix Bool',
             handlers: {
                 edit: function () {
                 },
@@ -493,7 +506,12 @@ var MathLineInput = /** @class */ (function () {
             else {
                 _this._jQEl.removeClass('GivenLine');
             }
-            console.log(_this.isAGivenLine());
+            if (_this.isEmpty()) {
+                _this._jQEl.addClass('emptyLine');
+            }
+            else {
+                _this._jQEl.removeClass('emptyLine');
+            }
         });
     };
     MathLineInput.prototype.setDeleteIfBackSpaceInEmptyFieldIsTypedEvent = function () {
@@ -871,9 +889,19 @@ var ShortcutsManager = /** @class */ (function () {
                     this._mathLineInput.duplicateMathLine();
                 }
                 break;
+            //ctrl + E ==> varepsilon
+            case KeyCodes.E_KEY:
+                this._mathLineInput.appendCmdAtCursorPosition('\\varepsilon');
+                break;
+            //ctrl + P ==> print 
+            case KeyCodes.P_KEY:
+                pEventObj.preventDefault();
+                this._mathLineInput.appendValueAtCursorPosition('\\print(');
+                break;
         }
     };
     ShortcutsManager.prototype.bindAltShortcuts = function (pEventObj) {
+        console.log(pEventObj.which);
         switch (pEventObj.which) {
             //alt + D
             case KeyCodes.D_KEY:
@@ -996,7 +1024,7 @@ var ShortcutsManager = /** @class */ (function () {
                 this._mathLineInput.appendCmdAtCursorPosition('\\rceil');
                 break;
             //alt + *
-            case KeyCodes.EIGHT_KEY:
+            case KeyCodes.N8_KEY:
                 this._mathLineInput.appendCmdAtCursorPosition('\\star');
                 break;
             //alt + G
@@ -1004,16 +1032,20 @@ var ShortcutsManager = /** @class */ (function () {
                 this._mathLineInput.appendValueAtCursorPosition('\\Given ');
                 break;
             //alt + 9
-            case KeyCodes.NINE_KEY:
+            case KeyCodes.N9_KEY:
                 this._mathLineInput.appendCmdAtCursorPosition('\\infinity');
                 break;
             //alt + 7
-            case KeyCodes.SEVEN_KEY:
+            case KeyCodes.N7_KEY:
                 this._mathLineInput.appendValueAtCursorPosition('d/d_');
                 break;
             //alt + 6
-            case KeyCodes.SIX_KEY:
+            case KeyCodes.N6_KEY:
                 this._mathLineInput.appendValueAtCursorPosition('\\partial/\\partial_');
+                break;
+            //alt + 1
+            case KeyCodes.N1_KEY:
+                this._mathLineInput.appendCmdAtCursorPosition('\\neg');
                 break;
         }
     };
@@ -1498,9 +1530,8 @@ var AutoCompleter = /** @class */ (function () {
     };
     return AutoCompleter;
 }());
-function main() {
-    var firstMathLineInput = new MathLineInput();
-    firstMathLineInput.appendTo($('#content'));
-    firstMathLineInput.focus();
-}
-main();
+//(function main(): void {
+var firstMathLineInput = new MathLineInput();
+firstMathLineInput.appendTo($('#content'));
+firstMathLineInput.focus();
+//})();

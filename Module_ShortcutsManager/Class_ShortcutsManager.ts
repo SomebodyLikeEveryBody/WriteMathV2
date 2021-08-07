@@ -102,10 +102,22 @@ class ShortcutsManager {
                 }
                 
                 break;
+
+            //ctrl + E ==> varepsilon
+            case KeyCodes.E_KEY:
+                this._mathLineInput.appendCmdAtCursorPosition('\\varepsilon');
+                break;
+        
+            //ctrl + P ==> print 
+            case KeyCodes.P_KEY:
+                pEventObj.preventDefault();
+                this._mathLineInput.appendValueAtCursorPosition('\\print(');
+                break;
         }
     }
 
     protected bindAltShortcuts(pEventObj: EventObject): void {
+        console.log(pEventObj.which);
         switch (pEventObj.which) {
 
             //alt + D
@@ -259,7 +271,7 @@ class ShortcutsManager {
                 break;
 
             //alt + *
-            case KeyCodes.EIGHT_KEY:
+            case KeyCodes.N8_KEY:
                 this._mathLineInput.appendCmdAtCursorPosition('\\star');
                 break;
 
@@ -269,18 +281,23 @@ class ShortcutsManager {
                 break;
 
             //alt + 9
-            case KeyCodes.NINE_KEY:
+            case KeyCodes.N9_KEY:
                 this._mathLineInput.appendCmdAtCursorPosition('\\infinity');
                 break;
 
             //alt + 7
-            case KeyCodes.SEVEN_KEY:
+            case KeyCodes.N7_KEY:
                 this._mathLineInput.appendValueAtCursorPosition('d/d_');
                 break;
 
             //alt + 6
-            case KeyCodes.SIX_KEY:
+            case KeyCodes.N6_KEY:
                 this._mathLineInput.appendValueAtCursorPosition('\\partial/\\partial_');
+                break;
+
+            //alt + 1
+            case KeyCodes.N1_KEY:
+                this._mathLineInput.appendCmdAtCursorPosition('\\neg');
                 break;
         }
     }
