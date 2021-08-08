@@ -19,7 +19,7 @@ class MathLineInput {
 
         this._mathField = MathQuill.getInterface(2).MathField(this._jQEl[0], {
             autoCommands: 'implies infinity lor land neg union notin forall nabla Angstrom alpha beta gamma Gamma delta Delta zeta eta theta Theta iota kappa lambda mu nu pi rho sigma tau phi Phi chi psi Psi omega Omega',
-            autoOperatorNames: 'ln log det min max mod lcm gcd lim sin cos tan sec neq Function isEven isOdd divides Given Equation diff Vector Matrix Bool Graph',
+            autoOperatorNames: 'ln log det min max mod lcm gcd lim sin cos tan sec neq Function isEven isOdd divides Given Equation diff Vector Matrix Bool Graph Print',
             handlers: {
                 edit: () => {
                 },
@@ -131,6 +131,10 @@ class MathLineInput {
         this._jQEl.insertAfter(pElement);
     }
 
+    public insertBefore(pElement: JQueryElement): void {
+        this._jQEl.insertBefore(pElement);
+    }
+
     public hasPreviousMathLineInput(): Boolean {
         return this._previousMathLineInput !== null;
     }
@@ -145,9 +149,25 @@ class MathLineInput {
         return this;
     }
 
+    public createNewMathLineInputAndAppendBefore(pMathLineInput: MathLineInput): MathLineInput {
+        const newMathLineInput = new MathLineInput();
+              newMathLineInput.insertBefore(pMathLineInput.jQEl);
+              newMathLineInput.nextMathLineInput = pMathLineInput;
+
+            if (pMathLineInput.hasPreviousMathLineInput()) {
+                newMathLineInput.previousMathLineInput = pMathLineInput.previousMathLineInput;
+                pMathLineInput.previousMathLineInput.nextMathLineInput = newMathLineInput;
+            }
+
+            pMathLineInput.previousMathLineInput = newMathLineInput;
+            newMathLineInput.isDeletable = true;
+
+            return newMathLineInput;
+    }
+
     public createNewMathLineInputAndAppendAfter(pMathLineInput: MathLineInput): MathLineInput {
         const newMathLineInput = new MathLineInput();
-            newMathLineInput.insertAfter(pMathLineInput.jQEl);
+              newMathLineInput.insertAfter(pMathLineInput.jQEl);
 
             if (pMathLineInput.hasNextMathLineInput()) {
                 pMathLineInput.nextMathLineInput.previousMathLineInput = newMathLineInput;
@@ -354,12 +374,35 @@ class MathLineInput {
         this._mathField.__controller.cursor.show()
     }
 
-    public duplicateMathLine(): void {
+    public getTypedHistory(): HistoryStatement[] {
+        return this._undoRedoManager.getTypedHistory();
+    }
+
+    public setTypedHistoryWith(pTypedHistory: HistoryStatement[]): MathLineInput {
+        this._undoRedoManager.setTypedHistoryWith(pTypedHistory);
+        return this;
+    }
+
+    public addNewMathLineInputOverMe(): MathLineInput {
+        const newMathlineInput = this.createNewMathLineInputAndAppendBefore(this)
+            .focus()
+            .setCtrlToDown();
+
+        this._undoRedoManager.setSpecialKeysToUp(); 
+
+        return newMathlineInput;
+    }
+
+    public duplicateMathLine(): MathLineInput {
         const newMathlineInput = this.createNewMathLineInputAndAppendAfter(this)
             .setValue(this.value())
             .focus()
             .setCtrlToDown();
 
-        this._undoRedoManager.setSpecialKeysToUp();
+        newMathlineInput._undoRedoManager = this._undoRedoManager.getCopy(newMathlineInput);
+        newMathlineInput.setCursorConfiguration(this.getCursorConfiguration());
+        this._undoRedoManager.setSpecialKeysToUp(); 
+
+        return newMathlineInput;
     }
 }

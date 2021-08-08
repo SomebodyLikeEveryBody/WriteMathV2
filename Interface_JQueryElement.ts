@@ -3,6 +3,7 @@ interface JQueryElement {
 
     appendTo(pElement: JQueryElement): void;
     insertAfter(pElement: JQueryElement): void;
+    insertBefore(pElement: JQueryElement): void;
     remove(): void;
     hide(pTime: number): void;
     fadeOut(pTime: Number, pFunction: Function): void;

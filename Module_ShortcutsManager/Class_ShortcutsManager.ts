@@ -118,7 +118,7 @@ class ShortcutsManager {
             //ctrl + P ==> print 
             case KeyCodes.P_KEY:
                 pEventObj.preventDefault();
-                this._mathLineInput.appendValueAtCursorPosition('\\print(');
+                this._mathLineInput.appendValueAtCursorPosition('\\Print(');
                 break;
 
             //ctrl + right arrow
@@ -129,11 +129,29 @@ class ShortcutsManager {
             //ctrl + down arrow
             case KeyCodes.DOWNARROW_KEY:
                 pEventObj.preventDefault();
-                console.log('faire le truc');
-                this._mathLineInput.duplicateMathLine();    
-                this._mathLineInput.setValue('');
-                this._mathLineInput.focus();
-                this._mathLineInput.setCtrlToDown();
+                this._mathLineInput.addNewMathLineInputOverMe();
+                break;
+
+            //ctrl + up arrow ==> delete if empty and focus down
+            case KeyCodes.UPARROW_KEY:
+                pEventObj.preventDefault();
+                if (this._mathLineInput.isEmpty()) {
+                    if (this._mathLineInput.hasNextMathLineInput()) {
+                        this._mathLineInput.nextMathLineInput
+                            .focus()
+                            .setCtrlToDown();
+
+                        this._mathLineInput.erase();
+
+                    } else if (this._mathLineInput.hasPreviousMathLineInput()) {
+                        this._mathLineInput.previousMathLineInput
+                            .focus()
+                            .setCtrlToDown();
+
+                        this._mathLineInput.erase();
+                    }
+                }
+                
                 break;
         }
     }

@@ -38,6 +38,18 @@ class UndoRedoManager {
         this.setEvents();
     }
 
+    public getTypedHistory(): HistoryStatement[] {
+        return this._typedHistory;
+    }
+
+    public setTypedHistoryWith(pTypedHistory: HistoryStatement[]): void {
+        this._typedHistory = pTypedHistory;
+    }
+
+    public setCurrentStateAt(pState: Number): void {
+        this._currentState = pState;
+    }
+
     public setCtrlToDown(): void {
         this._ctrlIsDown = true;   
     }
@@ -186,6 +198,10 @@ class UndoRedoManager {
             // ctrl + Z ==> undo
             if (this._ctrlIsDown && this._ZIsDown) {
                 e.preventDefault();
+                console.log('------');
+                console.log(this._typedHistory);
+                console.log(this._currentState);
+                console.log('------');
                 this.undo();
             }
     
@@ -202,5 +218,22 @@ class UndoRedoManager {
         this._altIsDown = false;
         this._YIsDown = false;
         this._ZIsDown = false;
+    }
+
+    public getCopy(pMathLineInput: MathLineInput): UndoRedoManager {
+        const retUndoRedoManager = new UndoRedoManager(pMathLineInput);
+        const retTypedHistory = [];
+
+        for (let state in this._typedHistory) {
+            retTypedHistory.push({
+                value: this._typedHistory[state].value,
+                cursorConfiguration: this._typedHistory[state].cursorConfiguration
+            });
+        }
+
+        retUndoRedoManager.setTypedHistoryWith(retTypedHistory);
+        retUndoRedoManager.setCurrentStateAt(this._currentState.valueOf());
+
+        return retUndoRedoManager;
     }
 }

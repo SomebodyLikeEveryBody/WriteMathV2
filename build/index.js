@@ -323,7 +323,7 @@ var MathLineInput = /** @class */ (function () {
         this._isDeletable = true;
         this._mathField = MathQuill.getInterface(2).MathField(this._jQEl[0], {
             autoCommands: 'implies infinity lor land neg union notin forall nabla Angstrom alpha beta gamma Gamma delta Delta zeta eta theta Theta iota kappa lambda mu nu pi rho sigma tau phi Phi chi psi Psi omega Omega',
-            autoOperatorNames: 'ln log det min max mod lcm gcd lim sin cos tan sec neq Function isEven isOdd divides Given Equation diff Vector Matrix Bool Graph',
+            autoOperatorNames: 'ln log det min max mod lcm gcd lim sin cos tan sec neq Function isEven isOdd divides Given Equation diff Vector Matrix Bool Graph Print',
             handlers: {
                 edit: function () {
                 },
@@ -430,6 +430,9 @@ var MathLineInput = /** @class */ (function () {
     MathLineInput.prototype.insertAfter = function (pElement) {
         this._jQEl.insertAfter(pElement);
     };
+    MathLineInput.prototype.insertBefore = function (pElement) {
+        this._jQEl.insertBefore(pElement);
+    };
     MathLineInput.prototype.hasPreviousMathLineInput = function () {
         return this._previousMathLineInput !== null;
     };
@@ -440,6 +443,18 @@ var MathLineInput = /** @class */ (function () {
         this._undoRedoManager.setCtrlToDown();
         this._shortcutsManager.setCtrlToDown();
         return this;
+    };
+    MathLineInput.prototype.createNewMathLineInputAndAppendBefore = function (pMathLineInput) {
+        var newMathLineInput = new MathLineInput();
+        newMathLineInput.insertBefore(pMathLineInput.jQEl);
+        newMathLineInput.nextMathLineInput = pMathLineInput;
+        if (pMathLineInput.hasPreviousMathLineInput()) {
+            newMathLineInput.previousMathLineInput = pMathLineInput.previousMathLineInput;
+            pMathLineInput.previousMathLineInput.nextMathLineInput = newMathLineInput;
+        }
+        pMathLineInput.previousMathLineInput = newMathLineInput;
+        newMathLineInput.isDeletable = true;
+        return newMathLineInput;
     };
     MathLineInput.prototype.createNewMathLineInputAndAppendAfter = function (pMathLineInput) {
         var newMathLineInput = new MathLineInput();
@@ -627,12 +642,29 @@ var MathLineInput = /** @class */ (function () {
     MathLineInput.prototype.showCursor = function () {
         this._mathField.__controller.cursor.show();
     };
+    MathLineInput.prototype.getTypedHistory = function () {
+        return this._undoRedoManager.getTypedHistory();
+    };
+    MathLineInput.prototype.setTypedHistoryWith = function (pTypedHistory) {
+        this._undoRedoManager.setTypedHistoryWith(pTypedHistory);
+        return this;
+    };
+    MathLineInput.prototype.addNewMathLineInputOverMe = function () {
+        var newMathlineInput = this.createNewMathLineInputAndAppendBefore(this)
+            .focus()
+            .setCtrlToDown();
+        this._undoRedoManager.setSpecialKeysToUp();
+        return newMathlineInput;
+    };
     MathLineInput.prototype.duplicateMathLine = function () {
         var newMathlineInput = this.createNewMathLineInputAndAppendAfter(this)
             .setValue(this.value())
             .focus()
             .setCtrlToDown();
+        newMathlineInput._undoRedoManager = this._undoRedoManager.getCopy(newMathlineInput);
+        newMathlineInput.setCursorConfiguration(this.getCursorConfiguration());
         this._undoRedoManager.setSpecialKeysToUp();
+        return newMathlineInput;
     };
     return MathLineInput;
 }());
@@ -664,6 +696,15 @@ var UndoRedoManager = /** @class */ (function () {
         ];
         this.setEvents();
     }
+    UndoRedoManager.prototype.getTypedHistory = function () {
+        return this._typedHistory;
+    };
+    UndoRedoManager.prototype.setTypedHistoryWith = function (pTypedHistory) {
+        this._typedHistory = pTypedHistory;
+    };
+    UndoRedoManager.prototype.setCurrentStateAt = function (pState) {
+        this._currentState = pState;
+    };
     UndoRedoManager.prototype.setCtrlToDown = function () {
         this._ctrlIsDown = true;
     };
@@ -789,6 +830,10 @@ var UndoRedoManager = /** @class */ (function () {
             // ctrl + Z ==> undo
             if (_this._ctrlIsDown && _this._ZIsDown) {
                 e.preventDefault();
+                console.log('------');
+                console.log(_this._typedHistory);
+                console.log(_this._currentState);
+                console.log('------');
                 _this.undo();
             }
             // ctrl + Y ==> redo
@@ -803,6 +848,19 @@ var UndoRedoManager = /** @class */ (function () {
         this._altIsDown = false;
         this._YIsDown = false;
         this._ZIsDown = false;
+    };
+    UndoRedoManager.prototype.getCopy = function (pMathLineInput) {
+        var retUndoRedoManager = new UndoRedoManager(pMathLineInput);
+        var retTypedHistory = [];
+        for (var state in this._typedHistory) {
+            retTypedHistory.push({
+                value: this._typedHistory[state].value,
+                cursorConfiguration: this._typedHistory[state].cursorConfiguration
+            });
+        }
+        retUndoRedoManager.setTypedHistoryWith(retTypedHistory);
+        retUndoRedoManager.setCurrentStateAt(this._currentState.valueOf());
+        return retUndoRedoManager;
     };
     return UndoRedoManager;
 }());
@@ -902,7 +960,7 @@ var ShortcutsManager = /** @class */ (function () {
             //ctrl + P ==> print 
             case KeyCodes.P_KEY:
                 pEventObj.preventDefault();
-                this._mathLineInput.appendValueAtCursorPosition('\\print(');
+                this._mathLineInput.appendValueAtCursorPosition('\\Print(');
                 break;
             //ctrl + right arrow
             case KeyCodes.RIGHTARROW_KEY:
@@ -911,11 +969,25 @@ var ShortcutsManager = /** @class */ (function () {
             //ctrl + down arrow
             case KeyCodes.DOWNARROW_KEY:
                 pEventObj.preventDefault();
-                console.log('faire le truc');
-                this._mathLineInput.duplicateMathLine();
-                this._mathLineInput.setValue('');
-                this._mathLineInput.focus();
-                this._mathLineInput.setCtrlToDown();
+                this._mathLineInput.addNewMathLineInputOverMe();
+                break;
+            //ctrl + up arrow ==> delete if empty and focus down
+            case KeyCodes.UPARROW_KEY:
+                pEventObj.preventDefault();
+                if (this._mathLineInput.isEmpty()) {
+                    if (this._mathLineInput.hasNextMathLineInput()) {
+                        this._mathLineInput.nextMathLineInput
+                            .focus()
+                            .setCtrlToDown();
+                        this._mathLineInput.erase();
+                    }
+                    else if (this._mathLineInput.hasPreviousMathLineInput()) {
+                        this._mathLineInput.previousMathLineInput
+                            .focus()
+                            .setCtrlToDown();
+                        this._mathLineInput.erase();
+                    }
+                }
                 break;
         }
     };
