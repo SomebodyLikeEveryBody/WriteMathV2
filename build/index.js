@@ -507,7 +507,7 @@ var MathLineInput = /** @class */ (function () {
         this._mathField.keystroke('Backspace');
     };
     MathLineInput.prototype.isAGivenLine = function () {
-        return this.value().indexOf('Given') !== -1;
+        return (this.value().indexOf('Given') !== -1) || (this.value().indexOf('Let') !== -1);
     };
     MathLineInput.prototype.setEvents = function () {
         var _this = this;
@@ -638,6 +638,14 @@ var MathLineInput = /** @class */ (function () {
                 this._mathField.__controller.cursor.select();
             }
         }
+    };
+    MathLineInput.prototype.moveCursorToLeftEnd = function () {
+        this._mathField.moveToLeftEnd();
+        return this;
+    };
+    MathLineInput.prototype.moveCursorToRightEnd = function () {
+        this._mathField.moveToRightEnd();
+        return this;
     };
     MathLineInput.prototype.showCursor = function () {
         this._mathField.__controller.cursor.show();
@@ -971,6 +979,19 @@ var ShortcutsManager = /** @class */ (function () {
                 pEventObj.preventDefault();
                 this._mathLineInput.addNewMathLineInputOverMe();
                 break;
+            //ctrl + G
+            case KeyCodes.G_KEY:
+                pEventObj.preventDefault();
+                this._mathLineInput.appendValueAtCursorPosition('\\Given ');
+                break;
+            //ctrl + L
+            case KeyCodes.L_KEY:
+                pEventObj.preventDefault();
+                var cursorConfiguration = this._mathLineInput.getCursorConfiguration();
+                this._mathLineInput.moveCursorToLeftEnd();
+                this._mathLineInput.appendValueAtCursorPosition('\\Let ');
+                this._mathLineInput.setCursorConfiguration(cursorConfiguration);
+                break;
             //ctrl + up arrow ==> delete if empty and focus down
             case KeyCodes.UPARROW_KEY:
                 pEventObj.preventDefault();
@@ -1098,10 +1119,6 @@ var ShortcutsManager = /** @class */ (function () {
             case KeyCodes.T_KEY:
                 this._mathLineInput.appendCmdAtCursorPosition('\\perp');
                 break;
-            //alt + L
-            case KeyCodes.L_KEY:
-                this._mathLineInput.appendCmdAtCursorPosition('\\parallel');
-                break;
             //alt + |
             case KeyCodes.PIPE_KEY:
                 this._mathLineInput.appendCmdAtCursorPosition('\|');
@@ -1117,10 +1134,6 @@ var ShortcutsManager = /** @class */ (function () {
             //alt + *
             case KeyCodes.N8_KEY:
                 this._mathLineInput.appendCmdAtCursorPosition('\\star');
-                break;
-            //alt + G
-            case KeyCodes.G_KEY:
-                this._mathLineInput.appendValueAtCursorPosition('\\Given ');
                 break;
             //alt + 9
             case KeyCodes.N9_KEY:

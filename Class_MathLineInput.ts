@@ -230,7 +230,7 @@ class MathLineInput {
     }
 
     protected isAGivenLine(): Boolean {
-        return this.value().indexOf('Given') !== -1;
+        return (this.value().indexOf('Given') !== -1) || (this.value().indexOf('Let') !== -1);
     }
 
     protected setEvents(): void {
@@ -368,6 +368,16 @@ class MathLineInput {
                 this._mathField.__controller.cursor.select();
             }
         }
+    }
+
+    public moveCursorToLeftEnd(): MathLineInput{
+        this._mathField.moveToLeftEnd();
+        return this;
+    }
+
+    public moveCursorToRightEnd(): MathLineInput{
+        this._mathField.moveToRightEnd();
+        return this;
     }
 
     public showCursor(): void {

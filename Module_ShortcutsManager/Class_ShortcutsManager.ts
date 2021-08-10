@@ -132,6 +132,21 @@ class ShortcutsManager {
                 this._mathLineInput.addNewMathLineInputOverMe();
                 break;
 
+            //ctrl + G
+            case KeyCodes.G_KEY:
+                pEventObj.preventDefault();
+                this._mathLineInput.appendValueAtCursorPosition('\\Given ');
+                break;
+
+            //ctrl + L
+            case KeyCodes.L_KEY:
+                pEventObj.preventDefault();
+                const cursorConfiguration = this._mathLineInput.getCursorConfiguration();
+                this._mathLineInput.moveCursorToLeftEnd();
+                this._mathLineInput.appendValueAtCursorPosition('\\Let ');
+                this._mathLineInput.setCursorConfiguration(cursorConfiguration);
+                break;
+
             //ctrl + up arrow ==> delete if empty and focus down
             case KeyCodes.UPARROW_KEY:
                 pEventObj.preventDefault();
@@ -289,11 +304,6 @@ class ShortcutsManager {
             case KeyCodes.T_KEY:
                 this._mathLineInput.appendCmdAtCursorPosition('\\perp');
                 break;
-                
-            //alt + L
-            case KeyCodes.L_KEY:
-                this._mathLineInput.appendCmdAtCursorPosition('\\parallel');
-                break;
 
             //alt + |
             case KeyCodes.PIPE_KEY:
@@ -313,11 +323,6 @@ class ShortcutsManager {
             //alt + *
             case KeyCodes.N8_KEY:
                 this._mathLineInput.appendCmdAtCursorPosition('\\star');
-                break;
-
-            //alt + G
-            case KeyCodes.G_KEY:
-                this._mathLineInput.appendValueAtCursorPosition('\\Given ');
                 break;
 
             //alt + 9
