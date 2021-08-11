@@ -135,16 +135,39 @@ class ShortcutsManager {
             //ctrl + G
             case KeyCodes.G_KEY:
                 pEventObj.preventDefault();
-                this._mathLineInput.appendValueAtCursorPosition('\\Given ');
+                (() => {
+                    const cursorConfiguration = this._mathLineInput.getCursorConfiguration();
+
+                    cursorConfiguration.cursor = ["endsL", "L", "L", ...cursorConfiguration.cursor.slice(1)];
+                    if (cursorConfiguration.anticursor) {
+                        cursorConfiguration.anticursor = ["endsL", "L", "L", ...cursorConfiguration.anticursor.slice(1)];
+                    }
+
+                    this._mathLineInput.moveCursorToLeftEnd();
+                    this._mathLineInput.appendValueAtCursorPosition('\\Given ');
+                    this._mathLineInput.setCursorConfiguration(cursorConfiguration);
+                    this._mathLineInput.saveUndoRedoState();
+                })();
+                
                 break;
 
             //ctrl + L
             case KeyCodes.L_KEY:
                 pEventObj.preventDefault();
-                const cursorConfiguration = this._mathLineInput.getCursorConfiguration();
-                this._mathLineInput.moveCursorToLeftEnd();
-                this._mathLineInput.appendValueAtCursorPosition('\\Let ');
-                this._mathLineInput.setCursorConfiguration(cursorConfiguration);
+                (() => {
+                    const cursorConfiguration = this._mathLineInput.getCursorConfiguration();
+
+                    cursorConfiguration.cursor = ["endsL", "L", "L", ...cursorConfiguration.cursor.slice(1)];
+                    if (cursorConfiguration.anticursor) {
+                        cursorConfiguration.anticursor = ["endsL", "L", "L", ...cursorConfiguration.anticursor.slice(1)];
+                    }
+
+                    this._mathLineInput.moveCursorToLeftEnd();
+                    this._mathLineInput.appendValueAtCursorPosition('\\Let ');
+                    this._mathLineInput.setCursorConfiguration(cursorConfiguration);
+                    this._mathLineInput.saveUndoRedoState();
+                })();
+                
                 break;
 
             //ctrl + up arrow ==> delete if empty and focus down

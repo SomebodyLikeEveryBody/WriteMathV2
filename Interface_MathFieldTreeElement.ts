@@ -1,4 +1,4 @@
 interface MathFieldTreeElement {
     ends: Object,
-    parent: MathFieldTreeElement
+    parent: MathFieldTreeElement,
 }

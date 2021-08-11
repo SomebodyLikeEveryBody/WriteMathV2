@@ -8,6 +8,11 @@ const unaffectingKeys: KeyCodes[] = [
     KeyCodes.PAGEUP_KEY,
     KeyCodes.PAGEDOWN_KEY,
     KeyCodes.ALTGR_KEY,
+    KeyCodes.UPARROW_KEY,
+    KeyCodes.DOWNARROW_KEY,
+    KeyCodes.LEFTARROW_KEY,
+    KeyCodes.RIGHTARROW_KEY,
+    KeyCodes.END_KEY,
 ];
 
 class UndoRedoManager {
@@ -122,7 +127,7 @@ class UndoRedoManager {
         return (this._currentState === 0);
     }
 
-    protected saveState(): void {
+    public saveState(): void {
         if (!(this.isCurrentStateIsLastHistoryState())) {
             this._typedHistory = this._typedHistory.slice(0, (this._currentState.valueOf() + 1));
         }   
@@ -198,10 +203,6 @@ class UndoRedoManager {
             // ctrl + Z ==> undo
             if (this._ctrlIsDown && this._ZIsDown) {
                 e.preventDefault();
-                console.log('------');
-                console.log(this._typedHistory);
-                console.log(this._currentState);
-                console.log('------');
                 this.undo();
             }
     

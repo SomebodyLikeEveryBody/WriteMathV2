@@ -330,6 +330,8 @@ class MathLineInput {
         }
     }
 
+
+
     protected setLocationOf(pCursor: (String|Number)[]) {
         const L = -1;
         const R = 1;
@@ -337,6 +339,8 @@ class MathLineInput {
         let mathfieldTreeElement: MathFieldTreeElement = this._mathField.__controller.root;
 
         for (let i = 0; i < pCursor.length; i++) {
+
+            // console.log(mathfieldTreeElement.JQ);
             switch (pCursor[i]) {
                 case 'L':
                     mathfieldTreeElement = mathfieldTreeElement[R];
@@ -351,6 +355,34 @@ class MathLineInput {
             }
         }
     }
+
+    public saveUndoRedoState() {
+        this._undoRedoManager.saveState();
+    }
+
+    // public getJQElBeforeCursor(): any {
+    //     const L = -1;
+    //     const R = 1;
+        
+    //     const pCursor = this.getCursorConfiguration().cursor;
+    //     let mathfieldTreeElement: MathFieldTreeElement = this._mathField.__controller.root;
+
+    //     for (let i = 0; i < pCursor.length; i++) {
+    //         // console.log(mathfieldTreeElement);
+    //         switch (pCursor[i]) {
+    //             case 'L':
+    //                 mathfieldTreeElement = mathfieldTreeElement[R];
+    //                 break;
+
+    //             case 'endsL':
+    //                 mathfieldTreeElement = mathfieldTreeElement.ends[L];
+    //                 break;
+
+    //             default:
+    //                 return mathfieldTreeElement.jQ;
+    //         }
+    //     }
+    // }
 
     public setCursorConfiguration(pCursorConfiguration: CursorConfiguration): void {
         this._mathField.__controller.cursor.clearSelection();

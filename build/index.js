@@ -1,3 +1,8 @@
+var __spreadArray = (this && this.__spreadArray) || function (to, from) {
+    for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
+        to[j] = from[i];
+    return to;
+};
 var KeyCodes;
 (function (KeyCodes) {
     KeyCodes[KeyCodes["TILDE_KEY"] = 0] = "TILDE_KEY";
@@ -613,6 +618,7 @@ var MathLineInput = /** @class */ (function () {
         var R = 1;
         var mathfieldTreeElement = this._mathField.__controller.root;
         for (var i = 0; i < pCursor.length; i++) {
+            // console.log(mathfieldTreeElement.JQ);
             switch (pCursor[i]) {
                 case 'L':
                     mathfieldTreeElement = mathfieldTreeElement[R];
@@ -625,6 +631,28 @@ var MathLineInput = /** @class */ (function () {
             }
         }
     };
+    MathLineInput.prototype.saveUndoRedoState = function () {
+        this._undoRedoManager.saveState();
+    };
+    // public getJQElBeforeCursor(): any {
+    //     const L = -1;
+    //     const R = 1;
+    //     const pCursor = this.getCursorConfiguration().cursor;
+    //     let mathfieldTreeElement: MathFieldTreeElement = this._mathField.__controller.root;
+    //     for (let i = 0; i < pCursor.length; i++) {
+    //         // console.log(mathfieldTreeElement);
+    //         switch (pCursor[i]) {
+    //             case 'L':
+    //                 mathfieldTreeElement = mathfieldTreeElement[R];
+    //                 break;
+    //             case 'endsL':
+    //                 mathfieldTreeElement = mathfieldTreeElement.ends[L];
+    //                 break;
+    //             default:
+    //                 return mathfieldTreeElement.jQ;
+    //         }
+    //     }
+    // }
     MathLineInput.prototype.setCursorConfiguration = function (pCursorConfiguration) {
         this._mathField.__controller.cursor.clearSelection();
         this._mathField.__controller.cursor.startSelection();
@@ -686,6 +714,11 @@ var unaffectingKeys = [
     KeyCodes.PAGEUP_KEY,
     KeyCodes.PAGEDOWN_KEY,
     KeyCodes.ALTGR_KEY,
+    KeyCodes.UPARROW_KEY,
+    KeyCodes.DOWNARROW_KEY,
+    KeyCodes.LEFTARROW_KEY,
+    KeyCodes.RIGHTARROW_KEY,
+    KeyCodes.END_KEY,
 ];
 var UndoRedoManager = /** @class */ (function () {
     function UndoRedoManager(pMathLineInput) {
@@ -838,10 +871,6 @@ var UndoRedoManager = /** @class */ (function () {
             // ctrl + Z ==> undo
             if (_this._ctrlIsDown && _this._ZIsDown) {
                 e.preventDefault();
-                console.log('------');
-                console.log(_this._typedHistory);
-                console.log(_this._currentState);
-                console.log('------');
                 _this.undo();
             }
             // ctrl + Y ==> redo
@@ -938,6 +967,7 @@ var ShortcutsManager = /** @class */ (function () {
         this._altIsDown = false;
     };
     ShortcutsManager.prototype.bindCtrlShortcuts = function (pEventObj) {
+        var _this = this;
         switch (pEventObj.which) {
             //ctrl + [ ==> lfloor
             case KeyCodes.OPENHOOK_KEY:
@@ -982,15 +1012,32 @@ var ShortcutsManager = /** @class */ (function () {
             //ctrl + G
             case KeyCodes.G_KEY:
                 pEventObj.preventDefault();
-                this._mathLineInput.appendValueAtCursorPosition('\\Given ');
+                (function () {
+                    var cursorConfiguration = _this._mathLineInput.getCursorConfiguration();
+                    cursorConfiguration.cursor = __spreadArray(["endsL", "L", "L"], cursorConfiguration.cursor.slice(1));
+                    if (cursorConfiguration.anticursor) {
+                        cursorConfiguration.anticursor = __spreadArray(["endsL", "L", "L"], cursorConfiguration.anticursor.slice(1));
+                    }
+                    _this._mathLineInput.moveCursorToLeftEnd();
+                    _this._mathLineInput.appendValueAtCursorPosition('\\Given ');
+                    _this._mathLineInput.setCursorConfiguration(cursorConfiguration);
+                    _this._mathLineInput.saveUndoRedoState();
+                })();
                 break;
             //ctrl + L
             case KeyCodes.L_KEY:
                 pEventObj.preventDefault();
-                var cursorConfiguration = this._mathLineInput.getCursorConfiguration();
-                this._mathLineInput.moveCursorToLeftEnd();
-                this._mathLineInput.appendValueAtCursorPosition('\\Let ');
-                this._mathLineInput.setCursorConfiguration(cursorConfiguration);
+                (function () {
+                    var cursorConfiguration = _this._mathLineInput.getCursorConfiguration();
+                    cursorConfiguration.cursor = __spreadArray(["endsL", "L", "L"], cursorConfiguration.cursor.slice(1));
+                    if (cursorConfiguration.anticursor) {
+                        cursorConfiguration.anticursor = __spreadArray(["endsL", "L", "L"], cursorConfiguration.anticursor.slice(1));
+                    }
+                    _this._mathLineInput.moveCursorToLeftEnd();
+                    _this._mathLineInput.appendValueAtCursorPosition('\\Let ');
+                    _this._mathLineInput.setCursorConfiguration(cursorConfiguration);
+                    _this._mathLineInput.saveUndoRedoState();
+                })();
                 break;
             //ctrl + up arrow ==> delete if empty and focus down
             case KeyCodes.UPARROW_KEY:
