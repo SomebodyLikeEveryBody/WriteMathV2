@@ -414,11 +414,11 @@ class MathLineInput {
         if (cursorConfiguration.anticursor) {
             cursorConfiguration.anticursor = ["endsL", "L", "L", ...cursorConfiguration.anticursor.slice(1)];
         }
-
+        
         this.moveCursorToLeftEnd();
         this.appendValueAtCursorPosition(pKeyword);
         this.setCursorConfiguration(cursorConfiguration);
-        // this.saveUndoRedoState();
+        this.saveUndoRedoState();
 
         return this;
     }
@@ -426,15 +426,16 @@ class MathLineInput {
     public shiftKeywordInField(): MathLineInput {
         const cursorConfiguration: CursorConfiguration = this.getCursorConfiguration();
 
-        cursorConfiguration.cursor = ["endsL", ...cursorConfiguration.cursor.slice(2)];
+        cursorConfiguration.cursor = ["endsL", ...cursorConfiguration.cursor.slice(3)];
         if (cursorConfiguration.anticursor) {
-            cursorConfiguration.anticursor = ["endsL", ...cursorConfiguration.anticursor.slice(2)];
+            cursorConfiguration.anticursor = ["endsL", ...cursorConfiguration.anticursor.slice(3)];
         }
-
+        
         this.moveCursorToLeftEnd();
         this._mathField.keystroke('Shift-Right');
         this._mathField.keystroke('Backspace');
         this._mathField.keystroke('Del');
+        // this._mathField.__controller.cursor.anticursor = null;
         // this.setCursorConfiguration(cursorConfiguration);
         //==> bug ==> try to set value of the field with value().slice(0, len(keyword)) and then relocate the cursor
         this.saveUndoRedoState();
@@ -446,29 +447,6 @@ class MathLineInput {
         this._undoRedoManager.saveState();
     }
 
-    // public getJQElBeforeCursor(): any {
-    //     const L = -1;
-    //     const R = 1;
-        
-    //     const pCursor = this.getCursorConfiguration().cursor;
-    //     let mathfieldTreeElement: MathFieldTreeElement = this._mathField.__controller.root;
-
-    //     for (let i = 0; i < pCursor.length; i++) {
-    //         // console.log(mathfieldTreeElement);
-    //         switch (pCursor[i]) {
-    //             case 'L':
-    //                 mathfieldTreeElement = mathfieldTreeElement[R];
-    //                 break;
-
-    //             case 'endsL':
-    //                 mathfieldTreeElement = mathfieldTreeElement.ends[L];
-    //                 break;
-
-    //             default:
-    //                 return mathfieldTreeElement.jQ;
-    //         }
-    //     }
-    // }
 
     public setCursorConfiguration(pCursorConfiguration: CursorConfiguration): void {
         this._mathField.__controller.cursor.clearSelection();
