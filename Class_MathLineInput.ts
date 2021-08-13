@@ -229,10 +229,6 @@ class MathLineInput {
         this._mathField.keystroke('Backspace');
     }
 
-    protected isAGivenLine(): Boolean {
-        return (this.value().indexOf('Given') !== -1) || (this.value().indexOf('Let') !== -1);
-    }
-
     protected setEvents(): void {
         this.setDeleteIfBackSpaceInEmptyFieldIsTypedEvent();
 
@@ -240,10 +236,17 @@ class MathLineInput {
             this._autoCompleter.hide();
             this._undoRedoManager.setSpecialKeysToUp();
             this._shortcutsManager.setSpecialKeysToUp();
+
             if (this.isAGivenLine()) {
                 this._jQEl.addClass('GivenLine');
             } else {
                 this._jQEl.removeClass('GivenLine');
+            }
+
+            if (this.isALetLine()) {
+                this._jQEl.addClass('LetLine');
+            } else {
+                this._jQEl.removeClass('LetLine');
             }
 
             if (this.isEmpty()) {
@@ -325,11 +328,11 @@ class MathLineInput {
                 cursor: this.getLocationOf(this._mathField.__controller.cursor),
                 anticursor: this.getLocationOf(this._mathField.__controller.cursor.anticursor)
             }
+
         } else {
             return { cursor: this.getLocationOf(this._mathField.__controller.cursor) }
         }
     }
-
 
 
     protected setLocationOf(pCursor: (String|Number)[]) {
@@ -354,6 +357,89 @@ class MathLineInput {
                     this._mathField.__controller.cursor[pCursor[i].valueOf()](mathfieldTreeElement);
             }
         }
+    }
+
+    public isAGivenLine(): Boolean {
+        if (this.value().substr(0, 14) === '\\text{Given}\\ ') {
+            return true;
+        }
+
+        return false;
+    }
+
+    public isALetLine(): Boolean {
+        if (this.value().substr(0, 12) === "\\text{Let}\\ ") {
+            return true;
+        }
+
+        return false;
+    }
+
+    public stopBeingAGivenLine(): MathLineInput {
+        this.shiftKeywordInField();
+        return this;
+    }
+
+    public stopBeingALetLine(): MathLineInput {
+        this.shiftKeywordInField();
+        return this;
+    }
+
+    public becomeAGivenLine(): MathLineInput {
+        if (!(this.isAGivenLine())) {
+            if (this.isALetLine()) {
+                this.stopBeingALetLine();
+            }
+
+            this.prependToFieldKeyword('\\Given ');
+        }
+
+        return this;
+    }
+
+    public becomeALetLine() {
+        if (!(this.isALetLine())) {
+            if (this.isAGivenLine()) {
+                this.stopBeingAGivenLine();
+            }
+
+            this.prependToFieldKeyword('\\Let ');
+        }
+    }
+
+    public prependToFieldKeyword(pKeyword: String): MathLineInput {
+        const cursorConfiguration: CursorConfiguration = this.getCursorConfiguration();
+
+        cursorConfiguration.cursor = ["endsL", "L", "L", ...cursorConfiguration.cursor.slice(1)];
+        if (cursorConfiguration.anticursor) {
+            cursorConfiguration.anticursor = ["endsL", "L", "L", ...cursorConfiguration.anticursor.slice(1)];
+        }
+
+        this.moveCursorToLeftEnd();
+        this.appendValueAtCursorPosition(pKeyword);
+        this.setCursorConfiguration(cursorConfiguration);
+        // this.saveUndoRedoState();
+
+        return this;
+    }
+
+    public shiftKeywordInField(): MathLineInput {
+        const cursorConfiguration: CursorConfiguration = this.getCursorConfiguration();
+
+        cursorConfiguration.cursor = ["endsL", ...cursorConfiguration.cursor.slice(2)];
+        if (cursorConfiguration.anticursor) {
+            cursorConfiguration.anticursor = ["endsL", ...cursorConfiguration.anticursor.slice(2)];
+        }
+
+        this.moveCursorToLeftEnd();
+        this._mathField.keystroke('Shift-Right');
+        this._mathField.keystroke('Backspace');
+        this._mathField.keystroke('Del');
+        // this.setCursorConfiguration(cursorConfiguration);
+        //==> bug ==> try to set value of the field with value().slice(0, len(keyword)) and then relocate the cursor
+        this.saveUndoRedoState();
+
+        return this;
     }
 
     public saveUndoRedoState() {

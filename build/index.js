@@ -511,9 +511,6 @@ var MathLineInput = /** @class */ (function () {
         }
         this._mathField.keystroke('Backspace');
     };
-    MathLineInput.prototype.isAGivenLine = function () {
-        return (this.value().indexOf('Given') !== -1) || (this.value().indexOf('Let') !== -1);
-    };
     MathLineInput.prototype.setEvents = function () {
         var _this = this;
         this.setDeleteIfBackSpaceInEmptyFieldIsTypedEvent();
@@ -526,6 +523,12 @@ var MathLineInput = /** @class */ (function () {
             }
             else {
                 _this._jQEl.removeClass('GivenLine');
+            }
+            if (_this.isALetLine()) {
+                _this._jQEl.addClass('LetLine');
+            }
+            else {
+                _this._jQEl.removeClass('LetLine');
             }
             if (_this.isEmpty()) {
                 _this._jQEl.addClass('emptyLine');
@@ -631,6 +634,69 @@ var MathLineInput = /** @class */ (function () {
             }
         }
     };
+    MathLineInput.prototype.isAGivenLine = function () {
+        if (this.value().substr(0, 14) === '\\text{Given}\\ ') {
+            return true;
+        }
+        return false;
+    };
+    MathLineInput.prototype.isALetLine = function () {
+        if (this.value().substr(0, 12) === "\\text{Let}\\ ") {
+            return true;
+        }
+        return false;
+    };
+    MathLineInput.prototype.stopBeingAGivenLine = function () {
+        this.shiftKeywordInField();
+        return this;
+    };
+    MathLineInput.prototype.stopBeingALetLine = function () {
+        this.shiftKeywordInField();
+        return this;
+    };
+    MathLineInput.prototype.becomeAGivenLine = function () {
+        if (!(this.isAGivenLine())) {
+            if (this.isALetLine()) {
+                this.stopBeingALetLine();
+            }
+            this.prependToFieldKeyword('\\Given ');
+        }
+        return this;
+    };
+    MathLineInput.prototype.becomeALetLine = function () {
+        if (!(this.isALetLine())) {
+            if (this.isAGivenLine()) {
+                this.stopBeingAGivenLine();
+            }
+            this.prependToFieldKeyword('\\Let ');
+        }
+    };
+    MathLineInput.prototype.prependToFieldKeyword = function (pKeyword) {
+        var cursorConfiguration = this.getCursorConfiguration();
+        cursorConfiguration.cursor = __spreadArray(["endsL", "L", "L"], cursorConfiguration.cursor.slice(1));
+        if (cursorConfiguration.anticursor) {
+            cursorConfiguration.anticursor = __spreadArray(["endsL", "L", "L"], cursorConfiguration.anticursor.slice(1));
+        }
+        this.moveCursorToLeftEnd();
+        this.appendValueAtCursorPosition(pKeyword);
+        this.setCursorConfiguration(cursorConfiguration);
+        // this.saveUndoRedoState();
+        return this;
+    };
+    MathLineInput.prototype.shiftKeywordInField = function () {
+        var cursorConfiguration = this.getCursorConfiguration();
+        cursorConfiguration.cursor = __spreadArray(["endsL"], cursorConfiguration.cursor.slice(2));
+        if (cursorConfiguration.anticursor) {
+            cursorConfiguration.anticursor = __spreadArray(["endsL"], cursorConfiguration.anticursor.slice(2));
+        }
+        this.moveCursorToLeftEnd();
+        this._mathField.keystroke('Shift-Right');
+        this._mathField.keystroke('Backspace');
+        this._mathField.keystroke('Del');
+        // this.setCursorConfiguration(cursorConfiguration);
+        this.saveUndoRedoState();
+        return this;
+    };
     MathLineInput.prototype.saveUndoRedoState = function () {
         this._undoRedoManager.saveState();
     };
@@ -714,10 +780,10 @@ var unaffectingKeys = [
     KeyCodes.PAGEUP_KEY,
     KeyCodes.PAGEDOWN_KEY,
     KeyCodes.ALTGR_KEY,
-    KeyCodes.UPARROW_KEY,
-    KeyCodes.DOWNARROW_KEY,
-    KeyCodes.LEFTARROW_KEY,
-    KeyCodes.RIGHTARROW_KEY,
+    // KeyCodes.UPARROW_KEY,
+    // KeyCodes.DOWNARROW_KEY,
+    // KeyCodes.LEFTARROW_KEY,
+    // KeyCodes.RIGHTARROW_KEY,
     KeyCodes.END_KEY,
 ];
 var UndoRedoManager = /** @class */ (function () {
@@ -866,7 +932,7 @@ var UndoRedoManager = /** @class */ (function () {
     UndoRedoManager.prototype.setKeyDownEvents = function () {
         var _this = this;
         this._mathLineInput.keyDown(function (e) {
-            // console.log(e.which);
+            // console.log(this._mathLineInput.getCursorConfiguration());
             _this.checkIfSpecialKeysAreDownAndSetStates(e.which);
             // ctrl + Z ==> undo
             if (_this._ctrlIsDown && _this._ZIsDown) {
@@ -967,7 +1033,6 @@ var ShortcutsManager = /** @class */ (function () {
         this._altIsDown = false;
     };
     ShortcutsManager.prototype.bindCtrlShortcuts = function (pEventObj) {
-        var _this = this;
         switch (pEventObj.which) {
             //ctrl + [ ==> lfloor
             case KeyCodes.OPENHOOK_KEY:
@@ -1012,32 +1077,22 @@ var ShortcutsManager = /** @class */ (function () {
             //ctrl + G
             case KeyCodes.G_KEY:
                 pEventObj.preventDefault();
-                (function () {
-                    var cursorConfiguration = _this._mathLineInput.getCursorConfiguration();
-                    cursorConfiguration.cursor = __spreadArray(["endsL", "L", "L"], cursorConfiguration.cursor.slice(1));
-                    if (cursorConfiguration.anticursor) {
-                        cursorConfiguration.anticursor = __spreadArray(["endsL", "L", "L"], cursorConfiguration.anticursor.slice(1));
-                    }
-                    _this._mathLineInput.moveCursorToLeftEnd();
-                    _this._mathLineInput.appendValueAtCursorPosition('\\Given ');
-                    _this._mathLineInput.setCursorConfiguration(cursorConfiguration);
-                    _this._mathLineInput.saveUndoRedoState();
-                })();
+                if (this._mathLineInput.isAGivenLine()) {
+                    this._mathLineInput.stopBeingAGivenLine();
+                }
+                else {
+                    this._mathLineInput.becomeAGivenLine();
+                }
                 break;
             //ctrl + L
             case KeyCodes.L_KEY:
                 pEventObj.preventDefault();
-                (function () {
-                    var cursorConfiguration = _this._mathLineInput.getCursorConfiguration();
-                    cursorConfiguration.cursor = __spreadArray(["endsL", "L", "L"], cursorConfiguration.cursor.slice(1));
-                    if (cursorConfiguration.anticursor) {
-                        cursorConfiguration.anticursor = __spreadArray(["endsL", "L", "L"], cursorConfiguration.anticursor.slice(1));
-                    }
-                    _this._mathLineInput.moveCursorToLeftEnd();
-                    _this._mathLineInput.appendValueAtCursorPosition('\\Let ');
-                    _this._mathLineInput.setCursorConfiguration(cursorConfiguration);
-                    _this._mathLineInput.saveUndoRedoState();
-                })();
+                if (this._mathLineInput.isALetLine()) {
+                    this._mathLineInput.stopBeingALetLine();
+                }
+                else {
+                    this._mathLineInput.becomeALetLine();
+                }
                 break;
             //ctrl + up arrow ==> delete if empty and focus down
             case KeyCodes.UPARROW_KEY:

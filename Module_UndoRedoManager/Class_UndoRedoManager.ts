@@ -8,10 +8,10 @@ const unaffectingKeys: KeyCodes[] = [
     KeyCodes.PAGEUP_KEY,
     KeyCodes.PAGEDOWN_KEY,
     KeyCodes.ALTGR_KEY,
-    KeyCodes.UPARROW_KEY,
-    KeyCodes.DOWNARROW_KEY,
-    KeyCodes.LEFTARROW_KEY,
-    KeyCodes.RIGHTARROW_KEY,
+    // KeyCodes.UPARROW_KEY,
+    // KeyCodes.DOWNARROW_KEY,
+    // KeyCodes.LEFTARROW_KEY,
+    // KeyCodes.RIGHTARROW_KEY,
     KeyCodes.END_KEY,
 ];
 
@@ -197,7 +197,7 @@ class UndoRedoManager {
 
     protected setKeyDownEvents(): void {
         this._mathLineInput.keyDown((e) => {
-            // console.log(e.which);
+            // console.log(this._mathLineInput.getCursorConfiguration());
             this.checkIfSpecialKeysAreDownAndSetStates(e.which);
 
             // ctrl + Z ==> undo
