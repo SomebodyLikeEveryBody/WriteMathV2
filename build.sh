@@ -1,4 +1,4 @@
-tsc -t ES5 --outFile ./build/index.js \
+tsc -t ES5 --outFile ./build/WriteMath.js \
     ./Enum_KeyCodes.ts \
     ./Interface_Coordinates2D.ts \
     ./Interface_KeywordObject.ts \
@@ -17,8 +17,7 @@ tsc -t ES5 --outFile ./build/index.js \
     ./main.ts \
 
 
-cp ./htmlResources/index.html ./build/
-cp ./htmlResources/style.css ./build/
+cp ./htmlResources/WriteMathStyle.css ./build/
+cp ./Module_AutoCompleter/AutoCompleterStyle.css ./build/
 cp -R ./Module_MathQuill/ ./build/
 cp -R ./Module_jQuery/ ./build/
-cp ./Module_AutoCompleter/AutoCompleterStyle.css ./build/

@@ -334,6 +334,15 @@ class MathLineInput {
         }
     }
 
+    public getCursorConfigurationWithCursorAndAnticursorFusion(): CursorConfiguration {
+        let retCursorConfiguration: CursorConfiguration = this.getCursorConfiguration();
+
+        if (this.AreCursorAndAnticursorAtSameLocation(retCursorConfiguration)) {
+            delete retCursorConfiguration.anticursor;
+        }
+
+        return retCursorConfiguration;
+    }
 
     protected setLocationOf(pCursor: (String|Number)[]) {
         const L = -1;
@@ -376,12 +385,12 @@ class MathLineInput {
     }
 
     public stopBeingAGivenLine(): MathLineInput {
-        this.shiftKeywordInField();
+        this.shiftKeywordInField('Given');
         return this;
     }
 
     public stopBeingALetLine(): MathLineInput {
-        this.shiftKeywordInField();
+        this.shiftKeywordInField('Let');
         return this;
     }
 
@@ -391,7 +400,7 @@ class MathLineInput {
                 this.stopBeingALetLine();
             }
 
-            this.prependToFieldKeyword('\\Given ');
+            this.prependToFieldKeyword('Given');
         }
 
         return this;
@@ -403,41 +412,37 @@ class MathLineInput {
                 this.stopBeingAGivenLine();
             }
 
-            this.prependToFieldKeyword('\\Let ');
+            this.prependToFieldKeyword('Let');
         }
     }
 
     public prependToFieldKeyword(pKeyword: String): MathLineInput {
-        const cursorConfiguration: CursorConfiguration = this.getCursorConfiguration();
+        const cursorConfiguration: CursorConfiguration = this.getCursorConfigurationWithCursorAndAnticursorFusion();
+        const keyWordInLatex = '\\text{' + pKeyword.valueOf() + '}\\ ';
 
         cursorConfiguration.cursor = ["endsL", "L", "L", ...cursorConfiguration.cursor.slice(1)];
         if (cursorConfiguration.anticursor) {
             cursorConfiguration.anticursor = ["endsL", "L", "L", ...cursorConfiguration.anticursor.slice(1)];
         }
-        
-        this.moveCursorToLeftEnd();
-        this.appendValueAtCursorPosition(pKeyword);
+
+        this.setValue(keyWordInLatex + this.value());
         this.setCursorConfiguration(cursorConfiguration);
         this.saveUndoRedoState();
 
         return this;
     }
 
-    public shiftKeywordInField(): MathLineInput {
-        const cursorConfiguration: CursorConfiguration = this.getCursorConfiguration();
+    public shiftKeywordInField(pKeyword: String): MathLineInput {
+        const cursorConfiguration: CursorConfiguration = this.getCursorConfigurationWithCursorAndAnticursorFusion();
+        const keyWordInLatex = '\\text{' + pKeyword.valueOf() + '}\\ ';
 
         cursorConfiguration.cursor = ["endsL", ...cursorConfiguration.cursor.slice(3)];
         if (cursorConfiguration.anticursor) {
             cursorConfiguration.anticursor = ["endsL", ...cursorConfiguration.anticursor.slice(3)];
         }
         
-        this.moveCursorToLeftEnd();
-        this._mathField.keystroke('Shift-Right');
-        this._mathField.keystroke('Backspace');
-        this._mathField.keystroke('Del');
-        // this._mathField.__controller.cursor.anticursor = null;
-        // this.setCursorConfiguration(cursorConfiguration);
-        //==> bug ==> try to set value of the field with value().slice(0, len(keyword)) and then relocate the cursor
+        this.setValue(this.value().slice(keyWordInLatex.length));
+        this.setCursorConfiguration(cursorConfiguration);
         this.saveUndoRedoState();
 
         return this;
@@ -447,14 +452,31 @@ class MathLineInput {
         this._undoRedoManager.saveState();
     }
 
+    public AreCursorAndAnticursorAtSameLocation(pCursorConfiguration: CursorConfiguration): Boolean {
+        if ((!(pCursorConfiguration.anticursor))
+            || (pCursorConfiguration.cursor.length !== pCursorConfiguration.anticursor.length)) {
 
-    public setCursorConfiguration(pCursorConfiguration: CursorConfiguration): void {
+            return false;
+        }
+
+        for (let index in pCursorConfiguration.cursor) {
+            if (pCursorConfiguration.cursor[index] !== pCursorConfiguration.anticursor[index]) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    public setCursorConfiguration(pCursorConfiguration: CursorConfiguration): MathLineInput {
         this._mathField.__controller.cursor.clearSelection();
         this._mathField.__controller.cursor.startSelection();
         
-        if (pCursorConfiguration.anticursor) {
+        if ((pCursorConfiguration.anticursor) && (!(this.AreCursorAndAnticursorAtSameLocation(pCursorConfiguration)))) {
             this.setLocationOf(pCursorConfiguration.anticursor);
             this._mathField.__controller.cursor.startSelection();
+        } else {
+            delete this._mathField.__controller.cursor.anticursor;
         }
     
         if (pCursorConfiguration.cursor) {    
@@ -464,6 +486,8 @@ class MathLineInput {
                 this._mathField.__controller.cursor.select();
             }
         }
+
+        return this;
     }
 
     public moveCursorToLeftEnd(): MathLineInput{
@@ -506,7 +530,7 @@ class MathLineInput {
             .setCtrlToDown();
 
         newMathlineInput._undoRedoManager = this._undoRedoManager.getCopy(newMathlineInput);
-        newMathlineInput.setCursorConfiguration(this.getCursorConfiguration());
+        newMathlineInput.setCursorConfiguration(this.getCursorConfigurationWithCursorAndAnticursorFusion());
         this._undoRedoManager.setSpecialKeysToUp(); 
 
         return newMathlineInput;
