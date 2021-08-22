@@ -82,7 +82,7 @@ class MathLineInput {
         this._previousMathLineInput = pMathLineInput;
 	}
 
-    public get mathField () {
+    public get mathField (): any {
         return this._mathField;
 	}
 
@@ -117,6 +117,10 @@ class MathLineInput {
 
     public appendCmdAtCursorPosition(pValue: String): void {
         this._mathField.cmd(pValue);
+    }
+
+    public writeLatexAtCursorPosition(pLatex: String): void {
+        this._mathField.write(pLatex);
     }
 
     public isEmpty(): Boolean {
@@ -192,7 +196,7 @@ class MathLineInput {
         return retOffset
     };
 
-    public erase() {
+    public erase(): MathLineInput {
         if (this.hasPreviousMathLineInput()) {
             this.previousMathLineInput.nextMathLineInput = this.nextMathLineInput;
         }
@@ -203,33 +207,48 @@ class MathLineInput {
 
         this._autoCompleter.hide();
         this._jQEl.remove();
-    };
 
-    public keyDown(pFunction: Function): void {
-        this.jQEl.keydown((e) => pFunction(e));
+        return this;
     }
 
-    public keyUp(pFunction: Function): void {
+    public keyDown(pFunction: Function): MathLineInput {
+        this.jQEl.keydown((e) => pFunction(e));
+
+        return this;
+    }
+
+    public keyUp(pFunction: Function): MathLineInput {
         this.jQEl.keyup((e) => pFunction(e));
+        return this;
     }
 
     public autoCompleterIsVisible(): Boolean {
         return this._autoCompleter.isVisible();
     }
 
-    public blur(): void {
+    public blur(): MathLineInput {
         this._mathField.blur();
+
+        return this;
     }
 
-    public deleteLeftWord(pWordLen: number): void {
+    public keyStroke(pKey: String): MathLineInput {
+        this._mathField.keystroke(pKey);
+
+        return this;
+    }
+
+    public deleteLeftWord(pWordLen: number): MathLineInput {
         for (let i = 0; i< pWordLen; i++) {
             this._mathField.keystroke('Shift-Left');
         }
 
         this._mathField.keystroke('Backspace');
+
+        return this;
     }
 
-    protected setEvents(): void {
+    protected setEvents(): MathLineInput {
         this.setDeleteIfBackSpaceInEmptyFieldIsTypedEvent();
 
         this._jQEl.focusout(() => {
@@ -255,6 +274,8 @@ class MathLineInput {
                 this._jQEl.removeClass('emptyLine');
             }
         });
+
+        return this;
     }
 
     protected setDeleteIfBackSpaceInEmptyFieldIsTypedEvent() {

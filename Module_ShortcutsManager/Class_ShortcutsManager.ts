@@ -313,7 +313,7 @@ class ShortcutsManager {
 
             //alt + |
             case KeyCodes.PIPE_KEY:
-                this._mathLineInput.appendCmdAtCursorPosition('\|');
+                this._mathLineInput.appendCmdAtCursorPosition('\\|');
                 break;
 
             //alt + [
@@ -338,7 +338,10 @@ class ShortcutsManager {
 
             //alt + 7
             case KeyCodes.N7_KEY:
-                this._mathLineInput.appendValueAtCursorPosition('d/d_');
+                this._mathLineInput.writeLatexAtCursorPosition('\\frac{\\text{d}}{\\text{d}_{ }}');
+                this._mathLineInput.keyStroke('Left');
+                this._mathLineInput.keyStroke('Left');
+                this._mathLineInput
                 break;
 
             //alt + 6

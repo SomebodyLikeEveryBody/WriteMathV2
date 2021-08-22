@@ -426,6 +426,9 @@ var MathLineInput = /** @class */ (function () {
     MathLineInput.prototype.appendCmdAtCursorPosition = function (pValue) {
         this._mathField.cmd(pValue);
     };
+    MathLineInput.prototype.writeLatexAtCursorPosition = function (pLatex) {
+        this._mathField.write(pLatex);
+    };
     MathLineInput.prototype.isEmpty = function () {
         return this.value() === '';
     };
@@ -491,25 +494,33 @@ var MathLineInput = /** @class */ (function () {
         }
         this._autoCompleter.hide();
         this._jQEl.remove();
+        return this;
     };
-    ;
     MathLineInput.prototype.keyDown = function (pFunction) {
         this.jQEl.keydown(function (e) { return pFunction(e); });
+        return this;
     };
     MathLineInput.prototype.keyUp = function (pFunction) {
         this.jQEl.keyup(function (e) { return pFunction(e); });
+        return this;
     };
     MathLineInput.prototype.autoCompleterIsVisible = function () {
         return this._autoCompleter.isVisible();
     };
     MathLineInput.prototype.blur = function () {
         this._mathField.blur();
+        return this;
+    };
+    MathLineInput.prototype.keyStroke = function (pKey) {
+        this._mathField.keystroke(pKey);
+        return this;
     };
     MathLineInput.prototype.deleteLeftWord = function (pWordLen) {
         for (var i = 0; i < pWordLen; i++) {
             this._mathField.keystroke('Shift-Left');
         }
         this._mathField.keystroke('Backspace');
+        return this;
     };
     MathLineInput.prototype.setEvents = function () {
         var _this = this;
@@ -537,6 +548,7 @@ var MathLineInput = /** @class */ (function () {
                 _this._jQEl.removeClass('emptyLine');
             }
         });
+        return this;
     };
     MathLineInput.prototype.setDeleteIfBackSpaceInEmptyFieldIsTypedEvent = function () {
         var _this = this;
@@ -1225,7 +1237,7 @@ var ShortcutsManager = /** @class */ (function () {
                 break;
             //alt + |
             case KeyCodes.PIPE_KEY:
-                this._mathLineInput.appendCmdAtCursorPosition('\|');
+                this._mathLineInput.appendCmdAtCursorPosition('\\|');
                 break;
             //alt + [
             case KeyCodes.OPENHOOK_KEY:
@@ -1245,7 +1257,10 @@ var ShortcutsManager = /** @class */ (function () {
                 break;
             //alt + 7
             case KeyCodes.N7_KEY:
-                this._mathLineInput.appendValueAtCursorPosition('d/d_');
+                this._mathLineInput.writeLatexAtCursorPosition('\\frac{\\text{d}}{\\text{d}_{ }}');
+                this._mathLineInput.keyStroke('Left');
+                this._mathLineInput.keyStroke('Left');
+                this._mathLineInput;
                 break;
             //alt + 6
             case KeyCodes.N6_KEY:
