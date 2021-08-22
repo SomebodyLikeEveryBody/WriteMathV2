@@ -541,6 +541,18 @@ var MathLineInput = /** @class */ (function () {
             else {
                 _this._jQEl.removeClass('LetLine');
             }
+            if (_this.isACommentLine()) {
+                _this._jQEl.addClass('commentLine');
+            }
+            else {
+                _this._jQEl.removeClass('commentLine');
+            }
+            if (_this.isASeparatorLine()) {
+                _this._jQEl.addClass('separatorLine');
+            }
+            else {
+                _this._jQEl.removeClass('separatorLine');
+            }
             if (_this.isEmpty()) {
                 _this._jQEl.addClass('emptyLine');
             }
@@ -659,11 +671,17 @@ var MathLineInput = /** @class */ (function () {
         }
         return false;
     };
+    MathLineInput.prototype.isASeparatorLine = function () {
+        return this.value() == '--';
+    };
     MathLineInput.prototype.isALetLine = function () {
         if (this.value().substr(0, 12) === "\\text{Let}\\ ") {
             return true;
         }
         return false;
+    };
+    MathLineInput.prototype.isACommentLine = function () {
+        return this.value()[0] === "#";
     };
     MathLineInput.prototype.stopBeingAGivenLine = function () {
         this.shiftKeywordInField('Given');

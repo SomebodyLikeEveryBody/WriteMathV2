@@ -268,6 +268,18 @@ class MathLineInput {
                 this._jQEl.removeClass('LetLine');
             }
 
+            if (this.isACommentLine()) {
+                this._jQEl.addClass('commentLine');
+            } else {
+                this._jQEl.removeClass('commentLine');
+            }
+
+            if (this.isASeparatorLine()) {
+                this._jQEl.addClass('separatorLine');
+            } else {
+                this._jQEl.removeClass('separatorLine');
+            }
+
             if (this.isEmpty()) {
                 this._jQEl.addClass('emptyLine');
             } else {
@@ -397,12 +409,20 @@ class MathLineInput {
         return false;
     }
 
+    public isASeparatorLine(): Boolean {
+        return this.value() == '--';
+    }
+
     public isALetLine(): Boolean {
         if (this.value().substr(0, 12) === "\\text{Let}\\ ") {
             return true;
         }
 
         return false;
+    }
+
+    public isACommentLine(): Boolean {
+        return this.value()[0] === "#";
     }
 
     public stopBeingAGivenLine(): MathLineInput {
