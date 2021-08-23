@@ -249,7 +249,8 @@ class MathLineInput {
     }
 
     protected setEvents(): MathLineInput {
-        this.setDeleteIfBackSpaceInEmptyFieldIsTypedEvent();
+        this.setKeyDownEvents();
+        this.setKeyUpEvents();
 
         this._jQEl.focusout(() => {
             this._autoCompleter.hide();
@@ -290,10 +291,10 @@ class MathLineInput {
         return this;
     }
 
-    protected setDeleteIfBackSpaceInEmptyFieldIsTypedEvent() {
+    protected setKeyDownEvents(): MathLineInput {
         this.keyDown((e) => {
 
-            //press delete
+            //press delete ==> delete line if is empty
             if (e.which === KeyCodes.DELETE_KEY && this.isEmpty()) {
                 if (this.hasPreviousMathLineInput() || this.hasNextMathLineInput()) {
                     if (this.hasNextMathLineInput()) {
@@ -305,24 +306,41 @@ class MathLineInput {
                     this.erase();
                 }
 
-            //press backspace
+            //press backspace ==> delete if is empty
             } else if (e.which === KeyCodes.BACKSPACE_KEY && this.isDeletable) {
                 if (this.hasPreviousMathLineInput() && this.isEmpty()) {
                     this.erase();
                     this.previousMathLineInput.focus();
                 }
+
+            //press escape
             } else if (e.which === KeyCodes.ESCAPE_KEY) {
                 if (this.autoCompleterIsVisible()) {
                     this._autoCompleter.hide()
                 } else {
                     this.blur();
                 }
+
             } else if (this.isEmpty()) {
                 this.isDeletable = true;
             } else {
                 this.isDeletable = false;
             }
         });
+
+        return this;
+    }
+
+    protected setKeyUpEvents(): MathLineInput {
+        this.keyUp((e) => {
+            if (this.isEmpty()) {
+                this.isDeletable = true;
+            } else {
+                this.isDeletable = false;
+            }
+        });
+
+        return this;
     }
 
     protected getLocationOf(pCursor: MathFieldTreeElement): String[] {

@@ -524,7 +524,8 @@ var MathLineInput = /** @class */ (function () {
     };
     MathLineInput.prototype.setEvents = function () {
         var _this = this;
-        this.setDeleteIfBackSpaceInEmptyFieldIsTypedEvent();
+        this.setKeyDownEvents();
+        this.setKeyUpEvents();
         this._jQEl.focusout(function () {
             _this._autoCompleter.hide();
             _this._undoRedoManager.setSpecialKeysToUp();
@@ -562,10 +563,10 @@ var MathLineInput = /** @class */ (function () {
         });
         return this;
     };
-    MathLineInput.prototype.setDeleteIfBackSpaceInEmptyFieldIsTypedEvent = function () {
+    MathLineInput.prototype.setKeyDownEvents = function () {
         var _this = this;
         this.keyDown(function (e) {
-            //press delete
+            //press delete ==> delete line if is empty
             if (e.which === KeyCodes.DELETE_KEY && _this.isEmpty()) {
                 if (_this.hasPreviousMathLineInput() || _this.hasNextMathLineInput()) {
                     if (_this.hasNextMathLineInput()) {
@@ -576,13 +577,14 @@ var MathLineInput = /** @class */ (function () {
                     }
                     _this.erase();
                 }
-                //press backspace
+                //press backspace ==> delete if is empty
             }
             else if (e.which === KeyCodes.BACKSPACE_KEY && _this.isDeletable) {
                 if (_this.hasPreviousMathLineInput() && _this.isEmpty()) {
                     _this.erase();
                     _this.previousMathLineInput.focus();
                 }
+                //press escape
             }
             else if (e.which === KeyCodes.ESCAPE_KEY) {
                 if (_this.autoCompleterIsVisible()) {
@@ -599,6 +601,19 @@ var MathLineInput = /** @class */ (function () {
                 _this.isDeletable = false;
             }
         });
+        return this;
+    };
+    MathLineInput.prototype.setKeyUpEvents = function () {
+        var _this = this;
+        this.keyUp(function (e) {
+            if (_this.isEmpty()) {
+                _this.isDeletable = true;
+            }
+            else {
+                _this.isDeletable = false;
+            }
+        });
+        return this;
     };
     MathLineInput.prototype.getLocationOf = function (pCursor) {
         var L = -1;
