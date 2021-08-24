@@ -9,13 +9,15 @@ class MathLineInput {
     protected _autoCompleter: AutoCompleter;
     protected _undoRedoManager: UndoRedoManager;
     protected _shortcutsManager: ShortcutsManager;
+    protected _container: JQueryElement;
     protected _mathField: any;
 
-    public constructor() {
+    public constructor(pContainer: JQueryElement) {
         this._jQEl = $('<p class="mathLineInput"></p>');
         this._nextMathLineInput = null;
         this._previousMathLineInput = null;
         this._isDeletable = true;
+        this._container = pContainer;
 
         this._mathField = MathQuill.getInterface(2).MathField(this._jQEl[0], {
             autoCommands: 'implies infinity lor land neg union notin forall nabla Angstrom alpha beta gamma Gamma delta Delta zeta eta theta Theta iota kappa lambda mu nu pi rho sigma tau phi Phi chi psi Psi omega Omega',
@@ -64,6 +66,10 @@ class MathLineInput {
      * * * * * * * * * * * */
     public get jQEl (): JQueryElement {
         return this._jQEl;
+	}
+
+    public get container (): JQueryElement {
+        return this._container;
 	}
 
     public get nextMathLineInput (): MathLineInput {
@@ -154,7 +160,7 @@ class MathLineInput {
     }
 
     public createNewMathLineInputAndAppendBefore(pMathLineInput: MathLineInput): MathLineInput {
-        const newMathLineInput = new MathLineInput();
+        const newMathLineInput = new MathLineInput(this._container);
               newMathLineInput.insertBefore(pMathLineInput.jQEl);
               newMathLineInput.nextMathLineInput = pMathLineInput;
 
@@ -170,7 +176,7 @@ class MathLineInput {
     }
 
     public createNewMathLineInputAndAppendAfter(pMathLineInput: MathLineInput): MathLineInput {
-        const newMathLineInput = new MathLineInput();
+        const newMathLineInput = new MathLineInput(this._container);
               newMathLineInput.insertAfter(pMathLineInput.jQEl);
 
             if (pMathLineInput.hasNextMathLineInput()) {
@@ -185,7 +191,11 @@ class MathLineInput {
             return newMathLineInput;
     }
 
-    public getCursorCoordinates(): Object {
+    public getOffset(): Offset {
+        return this._jQEl.offset();
+    }
+
+    public getCursorCoordinates(): Offset {
         this.mathField.focus();
 
         let retOffset = this.mathField.__controller.cursor.offset();
@@ -248,9 +258,37 @@ class MathLineInput {
         return this;
     }
 
+    public isScrolledIntoView()
+    {
+        let docViewTop = this._container.scrollTop();
+        let docViewBottom = docViewTop.valueOf() + this._container.height().valueOf();
+    
+        let elemTop = this._jQEl.offset().top;
+        let elemBottom = elemTop.valueOf() + this._jQEl.height().valueOf();
+    
+        return ((elemBottom <= docViewBottom) && (elemTop >= docViewTop));
+    }
+
+    public scrollContainerTo(pValue: Number) {
+        this._container.animate({
+            scrollTop: pValue
+        }, 10);
+    }
+
+    public scrollContainerToMe(): MathLineInput {
+        this.scrollContainerTo(this.getOffset().top.valueOf() + this._jQEl.height().valueOf());
+        return this;
+    }
+
     protected setEvents(): MathLineInput {
         this.setKeyDownEvents();
         this.setKeyUpEvents();
+
+        this._jQEl.focusin(() => {
+            if (!this.isScrolledIntoView()) {
+                this.scrollContainerToMe();
+            }
+        });
 
         this._jQEl.focusout(() => {
             this._autoCompleter.hide();
@@ -402,8 +440,6 @@ class MathLineInput {
         let mathfieldTreeElement: MathFieldTreeElement = this._mathField.__controller.root;
 
         for (let i = 0; i < pCursor.length; i++) {
-
-            // console.log(mathfieldTreeElement.JQ);
             switch (pCursor[i]) {
                 case 'L':
                     mathfieldTreeElement = mathfieldTreeElement[R];

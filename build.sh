@@ -1,6 +1,7 @@
 tsc -t ES5 --outFile ./build/WriteMath.js \
     ./Enum_KeyCodes.ts \
     ./Interface_Coordinates2D.ts \
+    ./Interface_Offset.ts \
     ./Interface_KeywordObject.ts \
     ./Interface_JQueryElement.ts \
     ./Interface_InputTextElement.ts \

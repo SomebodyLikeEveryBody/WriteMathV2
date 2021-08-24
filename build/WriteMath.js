@@ -320,12 +320,13 @@ var g_keywordsList = [
     },
 ];
 var MathLineInput = /** @class */ (function () {
-    function MathLineInput() {
+    function MathLineInput(pContainer) {
         var _this = this;
         this._jQEl = $('<p class="mathLineInput"></p>');
         this._nextMathLineInput = null;
         this._previousMathLineInput = null;
         this._isDeletable = true;
+        this._container = pContainer;
         this._mathField = MathQuill.getInterface(2).MathField(this._jQEl[0], {
             autoCommands: 'implies infinity lor land neg union notin forall nabla Angstrom alpha beta gamma Gamma delta Delta zeta eta theta Theta iota kappa lambda mu nu pi rho sigma tau phi Phi chi psi Psi omega Omega',
             autoOperatorNames: 'ln log det min max mod lcm gcd lim sin cos tan sec neq Function isEven isOdd divides Given Equation diff Vector Matrix Bool Graph Print',
@@ -365,6 +366,13 @@ var MathLineInput = /** @class */ (function () {
          * * * * * * * * * * * */
         get: function () {
             return this._jQEl;
+        },
+        enumerable: false,
+        configurable: true
+    });
+    Object.defineProperty(MathLineInput.prototype, "container", {
+        get: function () {
+            return this._container;
         },
         enumerable: false,
         configurable: true
@@ -453,7 +461,7 @@ var MathLineInput = /** @class */ (function () {
         return this;
     };
     MathLineInput.prototype.createNewMathLineInputAndAppendBefore = function (pMathLineInput) {
-        var newMathLineInput = new MathLineInput();
+        var newMathLineInput = new MathLineInput(this._container);
         newMathLineInput.insertBefore(pMathLineInput.jQEl);
         newMathLineInput.nextMathLineInput = pMathLineInput;
         if (pMathLineInput.hasPreviousMathLineInput()) {
@@ -465,7 +473,7 @@ var MathLineInput = /** @class */ (function () {
         return newMathLineInput;
     };
     MathLineInput.prototype.createNewMathLineInputAndAppendAfter = function (pMathLineInput) {
-        var newMathLineInput = new MathLineInput();
+        var newMathLineInput = new MathLineInput(this._container);
         newMathLineInput.insertAfter(pMathLineInput.jQEl);
         if (pMathLineInput.hasNextMathLineInput()) {
             pMathLineInput.nextMathLineInput.previousMathLineInput = newMathLineInput;
@@ -475,6 +483,9 @@ var MathLineInput = /** @class */ (function () {
         newMathLineInput.previousMathLineInput = pMathLineInput;
         newMathLineInput.isDeletable = true;
         return newMathLineInput;
+    };
+    MathLineInput.prototype.getOffset = function () {
+        return this._jQEl.offset();
     };
     MathLineInput.prototype.getCursorCoordinates = function () {
         this.mathField.focus();
@@ -522,10 +533,31 @@ var MathLineInput = /** @class */ (function () {
         this._mathField.keystroke('Backspace');
         return this;
     };
+    MathLineInput.prototype.isScrolledIntoView = function () {
+        var docViewTop = this._container.scrollTop();
+        var docViewBottom = docViewTop.valueOf() + this._container.height().valueOf();
+        var elemTop = this._jQEl.offset().top;
+        var elemBottom = elemTop.valueOf() + this._jQEl.height().valueOf();
+        return ((elemBottom <= docViewBottom) && (elemTop >= docViewTop));
+    };
+    MathLineInput.prototype.scrollContainerTo = function (pValue) {
+        this._container.animate({
+            scrollTop: pValue
+        }, 10);
+    };
+    MathLineInput.prototype.scrollContainerToMe = function () {
+        this.scrollContainerTo(this.getOffset().top.valueOf() + this._jQEl.height().valueOf());
+        return this;
+    };
     MathLineInput.prototype.setEvents = function () {
         var _this = this;
         this.setKeyDownEvents();
         this.setKeyUpEvents();
+        this._jQEl.focusin(function () {
+            if (!_this.isScrolledIntoView()) {
+                _this.scrollContainerToMe();
+            }
+        });
         this._jQEl.focusout(function () {
             _this._autoCompleter.hide();
             _this._undoRedoManager.setSpecialKeysToUp();
@@ -667,7 +699,6 @@ var MathLineInput = /** @class */ (function () {
         var R = 1;
         var mathfieldTreeElement = this._mathField.__controller.root;
         for (var i = 0; i < pCursor.length; i++) {
-            // console.log(mathfieldTreeElement.JQ);
             switch (pCursor[i]) {
                 case 'L':
                     mathfieldTreeElement = mathfieldTreeElement[R];

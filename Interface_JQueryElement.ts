@@ -20,7 +20,12 @@ interface JQueryElement {
     keydown(pFunction: Function): JQueryElement;
     keyup(pFunction: Function): JQueryElement;
     focusout(pFunction: Function): JQueryElement;
+    focusin(pFunction: Function): JQueryElement;
     blur(pFuction: Function): JQueryElement;
     addClass(pClassName: String): JQueryElement;
     removeClass(pClassName: String): JQueryElement;
+    animate(pCssObject: Object, pTime: Number);
+    offset(): Offset;
+    scrollTop(): Number;
+    height(): Number;
 }
