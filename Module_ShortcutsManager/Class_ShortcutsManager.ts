@@ -110,7 +110,7 @@ class ShortcutsManager {
 
             
             //ctrl + O ==> o composition de fonction
-            case KeyCodes.O_KEY:
+            case KeyCodes.N0_KEY:
                 pEventObj.preventDefault();
                 this._mathLineInput.appendValueAtCursorPosition(' \\circ ');
                 break;

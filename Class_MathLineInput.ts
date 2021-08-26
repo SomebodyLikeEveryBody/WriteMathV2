@@ -258,25 +258,42 @@ class MathLineInput {
         return this;
     }
 
+    protected getContainerTopCoord(): Number {
+        return this._container.offset().top;
+    }
+
+    protected getContainerBottomCoord(): Number {
+        return this.getContainerTopCoord().valueOf() + this.container.outerHeight().valueOf();
+    }
+
+    protected getTopCoord(): Number {
+        return this._jQEl.offset().top;
+    }
+
+    protected getBottomCoord(): Number {
+        return this.getTopCoord().valueOf() + this._jQEl.outerHeight().valueOf();
+    }
+
     public isScrolledIntoView()
     {
-        let docViewTop = this._container.scrollTop();
-        let docViewBottom = docViewTop.valueOf() + this._container.height().valueOf();
-    
-        let elemTop = this._jQEl.offset().top;
-        let elemBottom = elemTop.valueOf() + this._jQEl.height().valueOf();
-    
-        return ((elemBottom <= docViewBottom) && (elemTop >= docViewTop));
+        const docViewTop = this.getContainerTopCoord().valueOf();
+        const docViewBottom = this.getContainerBottomCoord().valueOf();
+
+        const elemTop = this.getTopCoord().valueOf();
+        const elemBottom = this.getBottomCoord().valueOf();
+
+        return ((elemTop >= docViewTop) && (elemBottom <= docViewBottom));
     }
 
     public scrollContainerTo(pValue: Number) {
         this._container.animate({
-            scrollTop: pValue
-        }, 10);
+            scrollTop: pValue.valueOf()
+        }, 500);
     }
 
     public scrollContainerToMe(): MathLineInput {
-        this.scrollContainerTo(this.getOffset().top.valueOf() + this._jQEl.height().valueOf());
+        const ajustment = -17;
+        this.scrollContainerTo(this.getTopCoord().valueOf() + ajustment);
         return this;
     }
 
@@ -284,9 +301,22 @@ class MathLineInput {
         this.setKeyDownEvents();
         this.setKeyUpEvents();
 
-        this._jQEl.focusin(() => {
-            if (!this.isScrolledIntoView()) {
-                this.scrollContainerToMe();
+        this._jQEl.focusin((e) => {
+            const scrollUpAdjust = 20;
+            const scrollDownAdjust = 45;
+            
+            if (this.getTopCoord() < this.getContainerTopCoord()) {
+                this._container.scrollTop(this._container.scrollTop().valueOf() - scrollUpAdjust);
+            } else if (this.getBottomCoord() > this.getContainerBottomCoord()) {
+                this._container.scrollTop(this._container.scrollTop().valueOf() + scrollDownAdjust);
+            }
+
+            if (!(this.hasPreviousMathLineInput())) {
+                this._container.scrollTop(0);
+            } else if (!(this.hasNextMathLineInput())) {
+                this._container.scrollTop(this._container.scrollTop().valueOf() + this._container.height().valueOf());
+            } else {
+                
             }
         });
 

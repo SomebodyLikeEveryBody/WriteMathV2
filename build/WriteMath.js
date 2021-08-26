@@ -533,29 +533,55 @@ var MathLineInput = /** @class */ (function () {
         this._mathField.keystroke('Backspace');
         return this;
     };
+    MathLineInput.prototype.getContainerTopCoord = function () {
+        return this._container.offset().top;
+    };
+    MathLineInput.prototype.getContainerBottomCoord = function () {
+        return this.getContainerTopCoord().valueOf() + this.container.outerHeight().valueOf();
+    };
+    MathLineInput.prototype.getTopCoord = function () {
+        return this._jQEl.offset().top;
+    };
+    MathLineInput.prototype.getBottomCoord = function () {
+        return this.getTopCoord().valueOf() + this._jQEl.outerHeight().valueOf();
+    };
     MathLineInput.prototype.isScrolledIntoView = function () {
-        var docViewTop = this._container.scrollTop();
-        var docViewBottom = docViewTop.valueOf() + this._container.height().valueOf();
-        var elemTop = this._jQEl.offset().top;
-        var elemBottom = elemTop.valueOf() + this._jQEl.height().valueOf();
-        return ((elemBottom <= docViewBottom) && (elemTop >= docViewTop));
+        var docViewTop = this.getContainerTopCoord().valueOf();
+        var docViewBottom = this.getContainerBottomCoord().valueOf();
+        var elemTop = this.getTopCoord().valueOf();
+        var elemBottom = this.getBottomCoord().valueOf();
+        return ((elemTop >= docViewTop) && (elemBottom <= docViewBottom));
     };
     MathLineInput.prototype.scrollContainerTo = function (pValue) {
         this._container.animate({
-            scrollTop: pValue
-        }, 10);
+            scrollTop: pValue.valueOf()
+        }, 500);
     };
     MathLineInput.prototype.scrollContainerToMe = function () {
-        this.scrollContainerTo(this.getOffset().top.valueOf() + this._jQEl.height().valueOf());
+        var ajustment = -17;
+        this.scrollContainerTo(this.getTopCoord().valueOf() + ajustment);
         return this;
     };
     MathLineInput.prototype.setEvents = function () {
         var _this = this;
         this.setKeyDownEvents();
         this.setKeyUpEvents();
-        this._jQEl.focusin(function () {
-            if (!_this.isScrolledIntoView()) {
-                _this.scrollContainerToMe();
+        this._jQEl.focusin(function (e) {
+            var scrollUpAdjust = 20;
+            var scrollDownAdjust = 45;
+            if (_this.getTopCoord() < _this.getContainerTopCoord()) {
+                _this._container.scrollTop(_this._container.scrollTop().valueOf() - scrollUpAdjust);
+            }
+            else if (_this.getBottomCoord() > _this.getContainerBottomCoord()) {
+                _this._container.scrollTop(_this._container.scrollTop().valueOf() + scrollDownAdjust);
+            }
+            if (!(_this.hasPreviousMathLineInput())) {
+                _this._container.scrollTop(0);
+            }
+            else if (!(_this.hasNextMathLineInput())) {
+                _this._container.scrollTop(_this._container.scrollTop().valueOf() + _this._container.height().valueOf());
+            }
+            else {
             }
         });
         this._jQEl.focusout(function () {
@@ -1134,7 +1160,7 @@ var ShortcutsManager = /** @class */ (function () {
                 this._mathLineInput.appendCmdAtCursorPosition('\\varepsilon');
                 break;
             //ctrl + O ==> o composition de fonction
-            case KeyCodes.O_KEY:
+            case KeyCodes.N0_KEY:
                 pEventObj.preventDefault();
                 this._mathLineInput.appendValueAtCursorPosition(' \\circ ');
                 break;

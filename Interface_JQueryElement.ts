@@ -26,6 +26,7 @@ interface JQueryElement {
     removeClass(pClassName: String): JQueryElement;
     animate(pCssObject: Object, pTime: Number);
     offset(): Offset;
-    scrollTop(): Number;
+    scrollTop(pValue?: Number): Number;
     height(): Number;
+    outerHeight(): Number;
 }
