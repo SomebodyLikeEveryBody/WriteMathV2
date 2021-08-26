@@ -274,29 +274,6 @@ class MathLineInput {
         return this.getTopCoord().valueOf() + this._jQEl.outerHeight().valueOf();
     }
 
-    public isScrolledIntoView()
-    {
-        const docViewTop = this.getContainerTopCoord().valueOf();
-        const docViewBottom = this.getContainerBottomCoord().valueOf();
-
-        const elemTop = this.getTopCoord().valueOf();
-        const elemBottom = this.getBottomCoord().valueOf();
-
-        return ((elemTop >= docViewTop) && (elemBottom <= docViewBottom));
-    }
-
-    public scrollContainerTo(pValue: Number) {
-        this._container.animate({
-            scrollTop: pValue.valueOf()
-        }, 500);
-    }
-
-    public scrollContainerToMe(): MathLineInput {
-        const ajustment = -17;
-        this.scrollContainerTo(this.getTopCoord().valueOf() + ajustment);
-        return this;
-    }
-
     protected setEvents(): MathLineInput {
         this.setKeyDownEvents();
         this.setKeyUpEvents();

@@ -545,23 +545,6 @@ var MathLineInput = /** @class */ (function () {
     MathLineInput.prototype.getBottomCoord = function () {
         return this.getTopCoord().valueOf() + this._jQEl.outerHeight().valueOf();
     };
-    MathLineInput.prototype.isScrolledIntoView = function () {
-        var docViewTop = this.getContainerTopCoord().valueOf();
-        var docViewBottom = this.getContainerBottomCoord().valueOf();
-        var elemTop = this.getTopCoord().valueOf();
-        var elemBottom = this.getBottomCoord().valueOf();
-        return ((elemTop >= docViewTop) && (elemBottom <= docViewBottom));
-    };
-    MathLineInput.prototype.scrollContainerTo = function (pValue) {
-        this._container.animate({
-            scrollTop: pValue.valueOf()
-        }, 500);
-    };
-    MathLineInput.prototype.scrollContainerToMe = function () {
-        var ajustment = -17;
-        this.scrollContainerTo(this.getTopCoord().valueOf() + ajustment);
-        return this;
-    };
     MathLineInput.prototype.setEvents = function () {
         var _this = this;
         this.setKeyDownEvents();
