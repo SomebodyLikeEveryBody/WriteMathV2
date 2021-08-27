@@ -18,5 +18,9 @@ body
     display: flex;
     flex-direction: column;
     overflow: auto;
-    overflow-anchor: none;
+    /* test */
+    overflow-anchor: none !important;
+    scroll-snap-stop: normal !important;
+    overscroll-behavior: unset !important;
+    scroll-behavior: unset !important;
 }
