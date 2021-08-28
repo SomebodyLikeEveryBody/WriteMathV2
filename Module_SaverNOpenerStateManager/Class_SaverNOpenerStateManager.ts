@@ -1,17 +1,17 @@
 class SaverNOpenerStateManager {
     protected _jQEl: JQueryElement;
-    protected _container: JQueryElement;
+    protected _inputScreen: JQueryElement;
     protected _textarea: JQueryElement;
     protected _action: String;
     protected _callingMathLineInput: MathLineInput;
 
-    public constructor(pContainer: JQueryElement) {
+    public constructor(pInputScreen: JQueryElement) {
         this._jQEl = $('<div id="SaverNOpenerStateManager"><textarea autocorrect="off" autocapitalize="off" spellcheck="false"></textarea></div>');
         this._textarea = this._jQEl.find('textarea');
         this._callingMathLineInput = null;
-        this._container = pContainer;
+        this._inputScreen = pInputScreen;
 
-        this._jQEl.appendTo(this.container).hide(0)
+        this._jQEl.appendTo(this._inputScreen).hide(0)
         this.setEvents();
     }
 
@@ -19,8 +19,8 @@ class SaverNOpenerStateManager {
         return this._jQEl;
     }
 
-    public get container(): JQueryElement {
-        return this._container;
+    public get inputScreen(): JQueryElement {
+        return this._inputScreen;
     }
 
     public get action(): String {
@@ -65,6 +65,7 @@ class SaverNOpenerStateManager {
             this._action = "";
             this._callingMathLineInput.focus();
         });
+
         return this;
     }
 
@@ -95,7 +96,6 @@ class SaverNOpenerStateManager {
 
                     this.hide();
                     break;
-
             }
         });
     }
@@ -120,16 +120,16 @@ class SaverNOpenerStateManager {
         if (this.checkState()) {
             if (pState.length !== 0) {
                 this.eraseMathLineInputs();
-                let mathLineInput = new MathLineInput(this._container, this);
-                mathLineInput.appendTo(this._container);
-                mathLineInput.setValue(pState[0]);
-                mathLineInput.setStyle();
+                let mathLineInput = new MathLineInput(this._inputScreen, this);
+                mathLineInput.appendTo(this._inputScreen)
+                    .setValue(pState[0])
+                    .setStyle();
     
                 pState = pState.slice(1)
                 for (let index in pState) {
                     mathLineInput = mathLineInput.createNewMathLineInputAndAppendAfter(mathLineInput);
-                    mathLineInput.setValue(pState[index]);
-                    mathLineInput.setStyle();
+                    mathLineInput.setValue(pState[index])
+                        .setStyle();
                 }
     
                 mathLineInput.getLastMathLineInput().focus();
@@ -146,7 +146,6 @@ class SaverNOpenerStateManager {
 
         let mathLineInput = this._callingMathLineInput.getFirstMathLineInput();
         while (mathLineInput !== null) {
-            //retObj.MathLineInputsValues.push(mathLineInput.value());
             retObj.MathLineInputsValues.push(this.secureStr(mathLineInput.value()));
             mathLineInput = mathLineInput.nextMathLineInput;
         }

@@ -139,8 +139,10 @@ class MathLineInput {
         return this.value() === '';
     }
     
-    public appendTo(pElement: JQueryElement) {        
+    public appendTo(pElement: JQueryElement): MathLineInput {        
         this._jQEl.appendTo(pElement);
+
+        return this;
     }
 
     public insertAfter(pElement: JQueryElement): void {

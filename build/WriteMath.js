@@ -450,6 +450,7 @@ var MathLineInput = /** @class */ (function () {
     };
     MathLineInput.prototype.appendTo = function (pElement) {
         this._jQEl.appendTo(pElement);
+        return this;
     };
     MathLineInput.prototype.insertAfter = function (pElement) {
         this._jQEl.insertAfter(pElement);
@@ -1874,12 +1875,12 @@ var AutoCompleter = /** @class */ (function () {
     return AutoCompleter;
 }());
 var SaverNOpenerStateManager = /** @class */ (function () {
-    function SaverNOpenerStateManager(pContainer) {
+    function SaverNOpenerStateManager(pInputScreen) {
         this._jQEl = $('<div id="SaverNOpenerStateManager"><textarea autocorrect="off" autocapitalize="off" spellcheck="false"></textarea></div>');
         this._textarea = this._jQEl.find('textarea');
         this._callingMathLineInput = null;
-        this._container = pContainer;
-        this._jQEl.appendTo(this.container).hide(0);
+        this._inputScreen = pInputScreen;
+        this._jQEl.appendTo(this._inputScreen).hide(0);
         this.setEvents();
     }
     Object.defineProperty(SaverNOpenerStateManager.prototype, "jQEl", {
@@ -1889,9 +1890,9 @@ var SaverNOpenerStateManager = /** @class */ (function () {
         enumerable: false,
         configurable: true
     });
-    Object.defineProperty(SaverNOpenerStateManager.prototype, "container", {
+    Object.defineProperty(SaverNOpenerStateManager.prototype, "inputScreen", {
         get: function () {
-            return this._container;
+            return this._inputScreen;
         },
         enumerable: false,
         configurable: true
@@ -1987,15 +1988,15 @@ var SaverNOpenerStateManager = /** @class */ (function () {
         if (this.checkState()) {
             if (pState.length !== 0) {
                 this.eraseMathLineInputs();
-                var mathLineInput = new MathLineInput(this._container, this);
-                mathLineInput.appendTo(this._container);
-                mathLineInput.setValue(pState[0]);
-                mathLineInput.setStyle();
+                var mathLineInput = new MathLineInput(this._inputScreen, this);
+                mathLineInput.appendTo(this._inputScreen)
+                    .setValue(pState[0])
+                    .setStyle();
                 pState = pState.slice(1);
                 for (var index in pState) {
                     mathLineInput = mathLineInput.createNewMathLineInputAndAppendAfter(mathLineInput);
-                    mathLineInput.setValue(pState[index]);
-                    mathLineInput.setStyle();
+                    mathLineInput.setValue(pState[index])
+                        .setStyle();
                 }
                 mathLineInput.getLastMathLineInput().focus();
             }
@@ -2008,7 +2009,6 @@ var SaverNOpenerStateManager = /** @class */ (function () {
         };
         var mathLineInput = this._callingMathLineInput.getFirstMathLineInput();
         while (mathLineInput !== null) {
-            //retObj.MathLineInputsValues.push(mathLineInput.value());
             retObj.MathLineInputsValues.push(this.secureStr(mathLineInput.value()));
             mathLineInput = mathLineInput.nextMathLineInput;
         }

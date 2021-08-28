@@ -3,7 +3,7 @@
     margin: 0px;
     margin-bottom: 10px;
     padding: 10px;
-    width: calc(100% - 20px);
+    width: calc(100% - 24px);
     border: none;
     background-color: #cfe2e8;
     border-radius: 10px;
@@ -13,9 +13,10 @@
 .mathLineInput:focus-within {
     background: none;
     height: auto;
-
     background-color: lightgrey;
     color: black;
+    border: #5d8e9e 2px solid;
+
 }
 
 .GivenLine
@@ -53,19 +54,25 @@
     left: 25%;
     width: 50%;
     height: 50%;
-    background-color: lightgreen;
+    background-color: #5d8e9e;
     text-align: center;
     margin: 0px;
     padding: 0px;
-    border: white 2px solid;
+    border: white 1px solid;
+    box-shadow: 0px 0px 20px 1px black;
 }
 
 #SaverNOpenerStateManager textarea
 {
-    width: 100%;
-    height: 100%;  
+    margin: 0px;
+    width: calc(100% - 4px);
+    height: calc(100% - 4px);
     resize: none;
     background-color: #5d8e9e;
     color: white;
     border: none;
+}
+
+#SaverNOpenerStateManager textarea:focus {
+    outline: none;
 }
