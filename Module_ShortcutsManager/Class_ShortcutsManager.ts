@@ -180,8 +180,6 @@ class ShortcutsManager {
                 pEventObj.preventDefault();
                 this._mathLineInput.saverNOpenerManager.action = "SAVE";
                 this._mathLineInput.saverNOpenerManager.callingMathLineInput = this._mathLineInput;
-                this._mathLineInput.saverNOpenerManager.state = this._mathLineInput.saverNOpenerManager.getJSONState();
-                this._mathLineInput.saverNOpenerManager.disableEditing();
                 this._mathLineInput.saverNOpenerManager.show();
                 break;
 
@@ -190,8 +188,6 @@ class ShortcutsManager {
                 pEventObj.preventDefault();
                 this._mathLineInput.saverNOpenerManager.action = "OPEN";
                 this._mathLineInput.saverNOpenerManager.callingMathLineInput = this._mathLineInput;
-                this._mathLineInput.saverNOpenerManager.state = {};
-                this._mathLineInput.saverNOpenerManager.enableEditing();
                 this._mathLineInput.saverNOpenerManager.show();
                 break;
         }

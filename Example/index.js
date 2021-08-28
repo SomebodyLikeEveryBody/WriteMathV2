@@ -4,3 +4,5 @@ var firstMathLineInput = new MathLineInput($('#content'), saverNOpenerStateManag
 firstMathLineInput.appendTo($('#content'));
 firstMathLineInput.focus();
 //})();
+
+// (new MathLineInput($('#content'), new SaverNOpenerStateManager($('#content')))).appendTo($('#content')).focus();

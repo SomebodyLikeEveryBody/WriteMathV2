@@ -4,15 +4,14 @@ class SaverNOpenerStateManager {
     protected _textarea: JQueryElement;
     protected _action: String;
     protected _callingMathLineInput: MathLineInput;
-    protected _state: Object;
 
     public constructor(pContainer: JQueryElement) {
         this._jQEl = $('<div id="SaverNOpenerStateManager"><textarea autocorrect="off" autocapitalize="off" spellcheck="false"></textarea></div>');
         this._textarea = this._jQEl.find('textarea');
-        this.callingMathLineInput = null;
-        this._state = {};
+        this._callingMathLineInput = null;
+        this._container = pContainer;
 
-        this._jQEl.appendTo(pContainer).hide(0)
+        this._jQEl.appendTo(this.container).hide(0)
         this.setEvents();
     }
 
@@ -38,16 +37,24 @@ class SaverNOpenerStateManager {
         this._callingMathLineInput = pValue;
     }
 
-    public set state(pValue: Object) {
-        this._state = pValue;
+    protected secureStr(pStr: String): String {
+        return pStr.replace(/[^ -~]+/g, "");
     }
 
     public show(): SaverNOpenerStateManager {
-        this._textarea.val(JSON.stringify(this._state));
-        // this._jQEl.text(JSON.stringify(this._state).replace(/[^ -~]+/g, ""));
-        this._jQEl.fadeIn(100, () => {
-            this._textarea.select();
-        });
+        if (this.action === "SAVE" || this._action === "OPEN") {
+            if (this._action === "SAVE") {
+                this._textarea.val(this.secureStr(this.getJSONState()));
+                this.disableEditing();
+            } else if (this._action === "OPEN") {
+                this._textarea.val("{}");
+                this.enableEditing();
+            }
+    
+            this._jQEl.fadeIn(100, () => {
+                this._textarea.select();
+            });
+        }
 
         return this;
     }
@@ -56,7 +63,6 @@ class SaverNOpenerStateManager {
         this._jQEl.fadeOut(100, () => {
             this._textarea.val('');
             this._action = "";
-            this._state = {};
             this._callingMathLineInput.focus();
         });
         return this;
@@ -82,25 +88,55 @@ class SaverNOpenerStateManager {
                 case KeyCodes.ENTER_KEY:
                     pEventObj.preventDefault();
                     if (this._action === "OPEN") {
-                        const state = JSON.parse(this._textarea.val().valueOf());
-                        console.log('Need to regenerate all fields with values:');
-                        console.log(state);
-                        /*
-                            du coup il faudra aller sur le dernier mathline
-                            le remove
-                            aller sur son previous
-                            set son next (au previous) a null
-                            rebelotte tant que le previous n'est pas null
-
-                            ==> potentiel souci: le fait que le firstMathLineInput existe et puisse etre remove mais toujours en memoire ==> leak
-                            ==> comment regler ce probleme ? 
-                        */
+                        const textareaValue = this.secureStr(this._textarea.val());
+                        const state = JSON.parse(textareaValue.valueOf());
+                        this.replaceMathLineInputs(state['MathLineInputsValues']);
                     }
+
                     this.hide();
                     break;
 
             }
         });
+    }
+
+    public eraseMathLineInputs(): SaverNOpenerStateManager {
+        let currentMathLineInput = this._callingMathLineInput.getLastMathLineInput();
+
+        while (currentMathLineInput !== null) {
+            currentMathLineInput.nextMathLineInput = null;
+            currentMathLineInput.removeFromDOM();
+            currentMathLineInput = currentMathLineInput.previousMathLineInput;
+        }
+
+        return this;
+    }
+
+    protected checkState(): Boolean {
+        return true;
+    }
+
+    protected replaceMathLineInputs(pState: Array<String>): SaverNOpenerStateManager {
+        if (this.checkState()) {
+            if (pState.length !== 0) {
+                this.eraseMathLineInputs();
+                let mathLineInput = new MathLineInput(this._container, this);
+                mathLineInput.appendTo(this._container);
+                mathLineInput.setValue(pState[0]);
+                mathLineInput.setStyle();
+    
+                pState = pState.slice(1)
+                for (let index in pState) {
+                    mathLineInput = mathLineInput.createNewMathLineInputAndAppendAfter(mathLineInput);
+                    mathLineInput.setValue(pState[index]);
+                    mathLineInput.setStyle();
+                }
+    
+                mathLineInput.getLastMathLineInput().focus();
+            }
+        }
+
+        return this;
     }
 
     public getJSONState(): String {
@@ -109,12 +145,12 @@ class SaverNOpenerStateManager {
         };
 
         let mathLineInput = this._callingMathLineInput.getFirstMathLineInput();
-        do  {
+        while (mathLineInput !== null) {
             //retObj.MathLineInputsValues.push(mathLineInput.value());
-            retObj.MathLineInputsValues.push(mathLineInput.value().replace(/[^ -~]+/g, ""));
+            retObj.MathLineInputsValues.push(this.secureStr(mathLineInput.value()));
             mathLineInput = mathLineInput.nextMathLineInput;
-        } while (mathLineInput !== null);
+        }
 
-           return JSON.stringify(retObj);
+        return JSON.stringify(retObj);
     }
 }

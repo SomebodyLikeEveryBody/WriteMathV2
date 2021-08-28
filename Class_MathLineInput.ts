@@ -222,9 +222,13 @@ class MathLineInput {
         }
 
         this._autoCompleter.hide();
-        this._jQEl.remove();
+        this.removeFromDOM();
 
         return this;
+    }
+
+    public removeFromDOM() {
+        this._jQEl.remove();
     }
 
     public keyDown(pFunction: Function): MathLineInput {
@@ -307,37 +311,42 @@ class MathLineInput {
             this._autoCompleter.hide();
             this._undoRedoManager.setSpecialKeysToUp();
             this._shortcutsManager.setSpecialKeysToUp();
-
-            if (this.isAGivenLine()) {
-                this._jQEl.addClass('GivenLine');
-            } else {
-                this._jQEl.removeClass('GivenLine');
-            }
-
-            if (this.isALetLine()) {
-                this._jQEl.addClass('LetLine');
-            } else {
-                this._jQEl.removeClass('LetLine');
-            }
-
-            if (this.isACommentLine()) {
-                this._jQEl.addClass('commentLine');
-            } else {
-                this._jQEl.removeClass('commentLine');
-            }
-
-            if (this.isASeparatorLine()) {
-                this._jQEl.addClass('separatorLine');
-            } else {
-                this._jQEl.removeClass('separatorLine');
-            }
-
-            if (this.isEmpty()) {
-                this._jQEl.addClass('emptyLine');
-            } else {
-                this._jQEl.removeClass('emptyLine');
-            }
+            this.setStyle();
         });
+
+        return this;
+    }
+
+    public setStyle(): MathLineInput {
+        if (this.isAGivenLine()) {
+            this._jQEl.addClass('GivenLine');
+        } else {
+            this._jQEl.removeClass('GivenLine');
+        }
+
+        if (this.isALetLine()) {
+            this._jQEl.addClass('LetLine');
+        } else {
+            this._jQEl.removeClass('LetLine');
+        }
+
+        if (this.isACommentLine()) {
+            this._jQEl.addClass('commentLine');
+        } else {
+            this._jQEl.removeClass('commentLine');
+        }
+
+        if (this.isASeparatorLine()) {
+            this._jQEl.addClass('separatorLine');
+        } else {
+            this._jQEl.removeClass('separatorLine');
+        }
+
+        if (this.isEmpty()) {
+            this._jQEl.addClass('emptyLine');
+        } else {
+            this._jQEl.removeClass('emptyLine');
+        }
 
         return this;
     }
