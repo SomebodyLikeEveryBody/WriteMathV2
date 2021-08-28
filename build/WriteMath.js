@@ -320,13 +320,14 @@ var g_keywordsList = [
     },
 ];
 var MathLineInput = /** @class */ (function () {
-    function MathLineInput(pContainer) {
+    function MathLineInput(pContainer, pSaverNOpenerStateManager) {
         var _this = this;
         this._jQEl = $('<p class="mathLineInput"></p>');
         this._nextMathLineInput = null;
         this._previousMathLineInput = null;
         this._isDeletable = true;
         this._container = pContainer;
+        this._saverNOpenerStateManager = pSaverNOpenerStateManager;
         this._mathField = MathQuill.getInterface(2).MathField(this._jQEl[0], {
             autoCommands: 'implies infinity lor land neg union notin forall nabla Angstrom alpha beta gamma Gamma delta Delta zeta eta theta Theta iota kappa lambda mu nu pi rho sigma tau phi Phi chi psi Psi omega Omega',
             autoOperatorNames: 'ln log det min max mod lcm gcd lim sin cos tan sec neq Function isEven isOdd divides Given Equation diff Vector Matrix Bool Graph Print',
@@ -414,6 +415,13 @@ var MathLineInput = /** @class */ (function () {
         enumerable: false,
         configurable: true
     });
+    Object.defineProperty(MathLineInput.prototype, "saverNOpenerManager", {
+        get: function () {
+            return this._saverNOpenerStateManager;
+        },
+        enumerable: false,
+        configurable: true
+    });
     /* * * * * *
      * Methods *
      * * * * * */
@@ -461,7 +469,7 @@ var MathLineInput = /** @class */ (function () {
         return this;
     };
     MathLineInput.prototype.createNewMathLineInputAndAppendBefore = function (pMathLineInput) {
-        var newMathLineInput = new MathLineInput(this._container);
+        var newMathLineInput = new MathLineInput(this._container, this.saverNOpenerManager);
         newMathLineInput.insertBefore(pMathLineInput.jQEl);
         newMathLineInput.nextMathLineInput = pMathLineInput;
         if (pMathLineInput.hasPreviousMathLineInput()) {
@@ -473,7 +481,7 @@ var MathLineInput = /** @class */ (function () {
         return newMathLineInput;
     };
     MathLineInput.prototype.createNewMathLineInputAndAppendAfter = function (pMathLineInput) {
-        var newMathLineInput = new MathLineInput(this._container);
+        var newMathLineInput = new MathLineInput(this._container, this.saverNOpenerManager);
         newMathLineInput.insertAfter(pMathLineInput.jQEl);
         if (pMathLineInput.hasNextMathLineInput()) {
             pMathLineInput.nextMathLineInput.previousMathLineInput = newMathLineInput;
@@ -855,6 +863,20 @@ var MathLineInput = /** @class */ (function () {
         this._undoRedoManager.setSpecialKeysToUp();
         return newMathlineInput;
     };
+    MathLineInput.prototype.getFirstMathLineInput = function () {
+        var retMathlineInput = this;
+        while (retMathlineInput.previousMathLineInput !== null) {
+            retMathlineInput = retMathlineInput.previousMathLineInput;
+        }
+        return retMathlineInput;
+    };
+    MathLineInput.prototype.getLastMathLineInput = function () {
+        var retMathlineInput = this;
+        while (retMathlineInput.nextMathLineInput !== null) {
+            retMathlineInput = retMathlineInput.nextMathLineInput;
+        }
+        return retMathlineInput;
+    };
     return MathLineInput;
 }());
 var unaffectingKeys = [
@@ -1198,6 +1220,24 @@ var ShortcutsManager = /** @class */ (function () {
                         this._mathLineInput.erase();
                     }
                 }
+                break;
+            //save
+            case KeyCodes.S_KEY:
+                pEventObj.preventDefault();
+                this._mathLineInput.saverNOpenerManager.action = "SAVE";
+                this._mathLineInput.saverNOpenerManager.callingMathLineInput = this._mathLineInput;
+                this._mathLineInput.saverNOpenerManager.state = this._mathLineInput.saverNOpenerManager.getJSONState();
+                this._mathLineInput.saverNOpenerManager.disableEditing();
+                this._mathLineInput.saverNOpenerManager.show();
+                break;
+            //open
+            case KeyCodes.O_KEY:
+                pEventObj.preventDefault();
+                this._mathLineInput.saverNOpenerManager.action = "OPEN";
+                this._mathLineInput.saverNOpenerManager.callingMathLineInput = this._mathLineInput;
+                this._mathLineInput.saverNOpenerManager.state = {};
+                this._mathLineInput.saverNOpenerManager.enableEditing();
+                this._mathLineInput.saverNOpenerManager.show();
                 break;
         }
     };
@@ -1829,4 +1869,113 @@ var AutoCompleter = /** @class */ (function () {
         return (retKeywords.slice(0, 11));
     };
     return AutoCompleter;
+}());
+var SaverNOpenerStateManager = /** @class */ (function () {
+    function SaverNOpenerStateManager(pContainer) {
+        this._jQEl = $('<div id="SaverNOpenerStateManager"><textarea autocorrect="off" autocapitalize="off" spellcheck="false"></textarea></div>');
+        this._textarea = this._jQEl.find('textarea');
+        this.callingMathLineInput = null;
+        this._state = {};
+        this._jQEl.appendTo(pContainer).hide(0);
+        this.setEvents();
+    }
+    Object.defineProperty(SaverNOpenerStateManager.prototype, "jQEl", {
+        get: function () {
+            return this._jQEl;
+        },
+        enumerable: false,
+        configurable: true
+    });
+    Object.defineProperty(SaverNOpenerStateManager.prototype, "container", {
+        get: function () {
+            return this._container;
+        },
+        enumerable: false,
+        configurable: true
+    });
+    Object.defineProperty(SaverNOpenerStateManager.prototype, "action", {
+        get: function () {
+            return this._action;
+        },
+        set: function (pValue) {
+            if (pValue === "SAVE" || pValue === "OPEN") {
+                this._action = pValue;
+            }
+        },
+        enumerable: false,
+        configurable: true
+    });
+    Object.defineProperty(SaverNOpenerStateManager.prototype, "callingMathLineInput", {
+        set: function (pValue) {
+            this._callingMathLineInput = pValue;
+        },
+        enumerable: false,
+        configurable: true
+    });
+    Object.defineProperty(SaverNOpenerStateManager.prototype, "state", {
+        set: function (pValue) {
+            this._state = pValue;
+        },
+        enumerable: false,
+        configurable: true
+    });
+    SaverNOpenerStateManager.prototype.show = function () {
+        var _this = this;
+        this._textarea.val(JSON.stringify(this._state));
+        // this._jQEl.text(JSON.stringify(this._state).replace(/[^ -~]+/g, ""));
+        this._jQEl.fadeIn(100, function () {
+            _this._textarea.select();
+        });
+        return this;
+    };
+    SaverNOpenerStateManager.prototype.hide = function () {
+        var _this = this;
+        this._jQEl.fadeOut(100, function () {
+            _this._textarea.val('');
+            _this._action = "";
+            _this._state = {};
+            _this._callingMathLineInput.focus();
+        });
+        return this;
+    };
+    SaverNOpenerStateManager.prototype.enableEditing = function () {
+        this._textarea.attr('readonly', false);
+        return this;
+    };
+    SaverNOpenerStateManager.prototype.disableEditing = function () {
+        this._textarea.attr('readonly', true);
+        return this;
+    };
+    SaverNOpenerStateManager.prototype.setEvents = function () {
+        var _this = this;
+        this._jQEl.keydown(function (pEventObj) {
+            switch (pEventObj.which) {
+                case KeyCodes.ESCAPE_KEY:
+                    _this.hide();
+                    break;
+                case KeyCodes.ENTER_KEY:
+                    pEventObj.preventDefault();
+                    if (_this._action === "OPEN") {
+                        var state = JSON.parse(_this._textarea.val().valueOf());
+                        console.log('Need to regenerate all fields with values:');
+                        console.log(state);
+                    }
+                    _this.hide();
+                    break;
+            }
+        });
+    };
+    SaverNOpenerStateManager.prototype.getJSONState = function () {
+        var retObj = {
+            MathLineInputsValues: []
+        };
+        var mathLineInput = this._callingMathLineInput.getFirstMathLineInput();
+        do {
+            //retObj.MathLineInputsValues.push(mathLineInput.value());
+            retObj.MathLineInputsValues.push(mathLineInput.value().replace(/[^ -~]+/g, ""));
+            mathLineInput = mathLineInput.nextMathLineInput;
+        } while (mathLineInput !== null);
+        return JSON.stringify(retObj);
+    };
+    return SaverNOpenerStateManager;
 }());

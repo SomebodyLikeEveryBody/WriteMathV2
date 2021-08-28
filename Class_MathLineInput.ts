@@ -10,14 +10,16 @@ class MathLineInput {
     protected _undoRedoManager: UndoRedoManager;
     protected _shortcutsManager: ShortcutsManager;
     protected _container: JQueryElement;
+    protected _saverNOpenerStateManager: SaverNOpenerStateManager;
     protected _mathField: any;
 
-    public constructor(pContainer: JQueryElement) {
+    public constructor(pContainer: JQueryElement, pSaverNOpenerStateManager: SaverNOpenerStateManager) {
         this._jQEl = $('<p class="mathLineInput"></p>');
         this._nextMathLineInput = null;
         this._previousMathLineInput = null;
         this._isDeletable = true;
         this._container = pContainer;
+        this._saverNOpenerStateManager = pSaverNOpenerStateManager;
 
         this._mathField = MathQuill.getInterface(2).MathField(this._jQEl[0], {
             autoCommands: 'implies infinity lor land neg union notin forall nabla Angstrom alpha beta gamma Gamma delta Delta zeta eta theta Theta iota kappa lambda mu nu pi rho sigma tau phi Phi chi psi Psi omega Omega',
@@ -100,6 +102,10 @@ class MathLineInput {
         this._isDeletable = pBool;
     }
 
+    public get saverNOpenerManager(): SaverNOpenerStateManager {
+        return this._saverNOpenerStateManager;
+    }
+
     /* * * * * * 
      * Methods * 
      * * * * * */
@@ -160,7 +166,7 @@ class MathLineInput {
     }
 
     public createNewMathLineInputAndAppendBefore(pMathLineInput: MathLineInput): MathLineInput {
-        const newMathLineInput = new MathLineInput(this._container);
+        const newMathLineInput = new MathLineInput(this._container, this.saverNOpenerManager);
               newMathLineInput.insertBefore(pMathLineInput.jQEl);
               newMathLineInput.nextMathLineInput = pMathLineInput;
 
@@ -176,7 +182,7 @@ class MathLineInput {
     }
 
     public createNewMathLineInputAndAppendAfter(pMathLineInput: MathLineInput): MathLineInput {
-        const newMathLineInput = new MathLineInput(this._container);
+        const newMathLineInput = new MathLineInput(this._container, this.saverNOpenerManager);
               newMathLineInput.insertAfter(pMathLineInput.jQEl);
 
             if (pMathLineInput.hasNextMathLineInput()) {
@@ -626,7 +632,7 @@ class MathLineInput {
     }
 
     public duplicateMathLine(): MathLineInput {
-        const newMathlineInput = this.createNewMathLineInputAndAppendAfter(this)
+        const newMathlineInput: MathLineInput = this.createNewMathLineInputAndAppendAfter(this)
             .setValue(this.value())
             .focus()
             .setCtrlToDown();
@@ -636,5 +642,23 @@ class MathLineInput {
         this._undoRedoManager.setSpecialKeysToUp(); 
 
         return newMathlineInput;
+    }
+
+    public getFirstMathLineInput(): MathLineInput {
+        let retMathlineInput: MathLineInput = this;
+        while (retMathlineInput.previousMathLineInput !== null) {
+            retMathlineInput = retMathlineInput.previousMathLineInput;
+        }
+
+        return retMathlineInput;
+    }
+
+    public getLastMathLineInput(): MathLineInput {
+        let retMathlineInput: MathLineInput = this;
+        while (retMathlineInput.nextMathLineInput !== null) {
+            retMathlineInput = retMathlineInput.nextMathLineInput;
+        }
+
+        return retMathlineInput;
     }
 }

@@ -15,6 +15,7 @@ tsc -t ES5 --outFile ./build/WriteMath.js \
     ./Module_UndoRedoManager/Class_UndoRedoManager.ts \
     ./Module_ShortcutsManager/Class_ShortcutsManager.ts \
     ./Module_AutoCompleter/Class_AutoCompleter.ts \
+    ./Module_SaverNOpenerStateManager/Class_SaverNOpenerStateManager.ts \
     ./main.ts \
 
 
