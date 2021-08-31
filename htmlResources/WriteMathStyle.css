@@ -7,7 +7,7 @@
     border: none;
     background-color: #cfe2e8;
     border-radius: 10px;
-    font-size: 1.5em;
+    font-size: 1.2em;
 }
 
 .mathLineInput:focus-within {
@@ -41,7 +41,7 @@
 }
 .separatorLine
 {
-    color: lightblue;
+    color: #4a8ba0;
     background-color: #4a8ba0;
     height: 2px;
 }

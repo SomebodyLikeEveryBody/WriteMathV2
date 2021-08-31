@@ -142,6 +142,11 @@ class ShortcutsManager {
                 }
                 break;
 
+                //ctrl + *
+                case KeyCodes.N8_KEY:
+                this._mathLineInput.appendCmdAtCursorPosition('\\star');
+                break;
+
             //ctrl + L
             case KeyCodes.L_KEY:
                 pEventObj.preventDefault();
@@ -331,20 +336,15 @@ class ShortcutsManager {
             case KeyCodes.PIPE_KEY:
                 this._mathLineInput.appendCmdAtCursorPosition('\\|');
                 break;
-
+                
             //alt + [
             case KeyCodes.OPENHOOK_KEY:
-                this._mathLineInput.appendCmdAtCursorPosition('\\lceil');
+                this._mathLineInput.writeLatexAtCursorPosition('[');
                 break;
 
             //alt + ]
             case KeyCodes.CLOSEHOOK_KEY:
-                this._mathLineInput.appendCmdAtCursorPosition('\\rceil');
-                break;
-
-            //alt + *
-            case KeyCodes.N8_KEY:
-                this._mathLineInput.appendCmdAtCursorPosition('\\star');
+                this._mathLineInput.writeLatexAtCursorPosition(']');
                 break;
 
             //alt + 9
